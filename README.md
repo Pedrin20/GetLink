@@ -1,75 +1,124 @@
-# React + TypeScript + Vite
+# GetLink
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+O **GetLink** é uma aplicação Front-End inspirada no Linktree, desenvolvida para permitir que usuários centralizem e compartilhem seus principais links em uma única página personalizada.
 
-Currently, two official plugins are available:
+## 📋 Sobre o Projeto
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+O objetivo do GetLink é oferecer uma solução simples, moderna e responsiva para que criadores de conteúdo, profissionais, empresas e usuários em geral possam reunir seus links mais importantes em um único lugar.
 
-## React Compiler
+Com uma interface intuitiva e agradável, o usuário poderá criar sua página de links personalizada e compartilhar facilmente em redes sociais, currículos, portfólios e outros canais.
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## 🛠️ Tecnologias Utilizadas
 
-Note: This will impact Vite dev & build performances.
+- React
+- Vite
+- TypeScript
+- CSS
+- React Router DOM
+- Axios (caso utilize integração com API)
 
-## Expanding the ESLint configuration
+## ✨ Funcionalidades
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Cadastro e login de usuários
+- Página de perfil personalizada
+- Adição e gerenciamento de links
+- Interface responsiva para dispositivos móveis e desktop
+- Compartilhamento fácil do perfil
+- Edição de informações do usuário
+- Visualização pública dos links
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 📁 Estrutura do Projeto
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+src/
+├── assets/
+├── components/
+├── pages/
+├── routes/
+├── services/
+├── styles/
+├── types/
+├── App.tsx
+└── main.tsx
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## ⚙️ Como Executar o Projeto
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Pré-requisitos
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Node.js instalado
+- npm ou yarn
+
+### Clone o repositório
+
+```bash
+git clone https://github.com/seu-usuario/getlink.git
 ```
+
+### Entre na pasta do projeto
+
+```bash
+cd getlink
+```
+
+### Instale as dependências
+
+```bash
+npm install
+```
+
+### Execute o projeto
+
+```bash
+npm run dev
+```
+
+O projeto estará disponível em:
+
+```bash
+http://localhost:5173
+```
+
+## 📱 Responsividade
+
+O GetLink foi desenvolvido seguindo o conceito Mobile First, garantindo uma boa experiência em:
+
+- Smartphones
+- Tablets
+- Notebooks
+- Desktops
+
+## 🎯 Objetivos de Aprendizado
+
+Este projeto foi criado para aprofundar conhecimentos em:
+
+- React com TypeScript
+- Componentização
+- Gerenciamento de estados
+- Consumo de APIs
+- Roteamento de páginas
+- Boas práticas de desenvolvimento Front-End
+- Responsividade e UX/UI
+
+## 🔮 Melhorias Futuras
+
+- Upload de foto de perfil
+- Temas personalizados
+- Estatísticas de cliques
+- Integração com redes sociais
+- Modo escuro
+- Personalização avançada do perfil
+- Sistema de autenticação JWT
+
+## 👨‍💻 Desenvolvedor
+
+Desenvolvido por **Pedro Henrique**.
+
+### Contato
+
+- GitHub: https://github.com/seu-usuario
+- LinkedIn: https://linkedin.com/in/seu-perfil
+
+---
+
+⭐ Se este projeto foi útil para você, considere deixar uma estrela no repositório.

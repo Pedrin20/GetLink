@@ -116,8 +116,7 @@ Desenvolvido por **Pedro Henrique**.
 
 ### Contato
 
-- GitHub: https://github.com/seu-usuario
-- LinkedIn: https://linkedin.com/in/seu-perfil
+- GitHub: https://github.com/Pedrin20
 
 ---
 

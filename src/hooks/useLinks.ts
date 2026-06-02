@@ -1,10 +1,11 @@
 import { useState } from "react";
-import type { LinkItem } from "../App";
+import type { Link } from '../types'
 
-export function useLinks(initial: LinkItem[] = []) {
-    const [links, setLinks] = useState<LinkItem[]>(initial)
 
-    function add(link: Omit<LinkItem, 'id'>) {
+export function useLinks(initial: Link[] = []) {
+    const [links, setLinks] = useState<Link[]>(initial)
+
+    function add(link: Omit<Link, 'id'>) {
         setLinks((prev) => [{ ...link, id: Date.now() }, ...prev])
     }
 

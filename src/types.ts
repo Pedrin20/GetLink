@@ -1,6 +1,7 @@
 export type Link = {
-  id: number
+  id: string
   title: string
   url: string
   description: string
+  userId?:string
 }

@@ -1,17 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from 'react'
 import type { Link } from '../types'
+import { createLink, deleteLink, subscribeToUserLinks } from '../services/linkService'
 
+export function useLinksFirestore(userId?: string) {
+  const [links, setLinks] = useState<Link[]>([])
 
-export function useLinks(initial: Link[] = []) {
-    const [links, setLinks] = useState<Link[]>(initial)
-
-    function add(link: Omit<Link, 'id'>) {
-        setLinks((prev) => [{ ...link, id: Date.now() }, ...prev])
+  useEffect(() => {
+    if (!userId) {
+      setLinks([])
+      return
     }
+    const unsub = subscribeToUserLinks(userId, (items) => {
+      setLinks(items as Link[])
+    })
+    return () => unsub()
+  }, [userId])
 
-    function remove(id: number) {
-        setLinks((prev) => prev.filter((l) => l.id !== id))
-    }
+  async function add(link: Omit<Link, 'id'> & { userId: string }) {
+    await createLink(link)
+  }
 
-    return{ links, add, remove, setLinks }
+  async function remove(id: string) {
+    await deleteLink(id)
+  }
+
+  return { links, add, remove }
 }

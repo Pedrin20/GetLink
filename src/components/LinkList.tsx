@@ -3,7 +3,7 @@ import { LinkItem } from './LinkItem'
 
 type Props = {
   links: Link[]
-  onRemove: (id: number) => void
+  onRemove: (id: string) => void
 }
 
 export function LinkList({ links, onRemove }: Props) {

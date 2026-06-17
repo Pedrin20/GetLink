@@ -2,7 +2,7 @@ import type { Link } from "../types"
 
 type Props = {
     item: Link
-    onRemove: (id: number) => void
+    onRemove: (id: string) => void
 }
 
 export function LinkItem({ item, onRemove }: Props) {

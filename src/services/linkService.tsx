@@ -10,18 +10,20 @@ import {
   onSnapshot,
   getDocs,
   updateDoc,
+  Timestamp
 } from 'firebase/firestore'
 import { db } from '../firebase'
-import type { Link } from '../types'
+import type { Link, LinkWithId } from '../types'
 
 const linksCol = collection(db, 'links')
 
-export async function createLink(link: Omit<Link, 'id'> & { userId: string }) {
+export async function createLink(link: Omit<Link, 'createdAt'> & { userId: string }) {
   const docRef = await addDoc(linksCol, {
     ...link,
     userId: link.userId,
     createdAt: serverTimestamp(),
   })
+
   return docRef.id
 }
 
@@ -35,16 +37,35 @@ export async function deleteLink(id: string) {
   await deleteDoc(ref)
 }
 
-export function subscribeToUserLinks(userId: string, cb: (links: any[]) => void) {
-  const q = query(linksCol, where('userId', '==', userId), orderBy('createdAt', 'desc'))
+export function subscribeToUserLinks(
+  userId: string,
+  cb: (links: LinkWithId[]) => void
+): Unsubscribe {
+
+  const q = query(
+    linksCol,
+    where('userId', '==', userId),
+    orderBy('createdAt', 'desc')
+  )
+
   return onSnapshot(q, (snap) => {
-    const items = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+    const items: LinkWithId[] = snap.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as LinkWithId[]
     cb(items)
   })
 }
 
-export async function fetchUserLinks(userId: string) {
-  const q = query(linksCol, where('userId', '==', userId), orderBy('createdAt', 'desc'))
+export async function fetchUserLinks(userId: string): Promise<LinkWithId[]> {
+  const q = query(
+    linksCol,
+    where('userId', '==', userId),
+    orderBy('createdAt', 'desc')
+  )
   const snap = await getDocs(q)
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+  return snap.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as LinkWithId[]
 }

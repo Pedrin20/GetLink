@@ -7,12 +7,14 @@ export function useLinksFirestore(userId?: string) {
 
   useEffect(() => {
     if (!userId) {
-      setLinks([])
+      Promise.resolve().then(() => setLinks([]))
       return
     }
+
     const unsub = subscribeToUserLinks(userId, (items) => {
       setLinks(items as Link[])
     })
+    
     return () => unsub()
   }, [userId])
 

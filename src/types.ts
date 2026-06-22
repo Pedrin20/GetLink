@@ -1,12 +1,11 @@
-import type { Timestamp } from "firebase/firestore"
-
-export type Link = {
+// src/types.ts
+export interface Link {
   id: string
   title: string
   url: string
-  description: string
-  userId?:string
-  createdAt?: Timestamp
+  description?: string
+  userId: string
+  createdAt?: any
 }
 
-export type LinkWithId = Link & { id: string }
+export type LinkInput = Omit<Link, 'id' | 'createdAt'>

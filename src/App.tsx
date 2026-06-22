@@ -1,34 +1,24 @@
-import type { Link } from './types'
-import { useAuth } from "./hooks/useAuth"
-import { useLinksFirestore } from "./hooks/useLinks"
-import { LinkForm } from './components/LinkForm'
-import { LinkList } from './components/LinkList'
+// src/App.tsx
+import { useAuth } from './hooks/useAuth'
 import { AuthForm } from './components/AuthForm'
+import { Home } from './pages/Home'
 
 function App() {
-  const { user, loading, login, register, logout } = useAuth()
-  const { links, add, remove } = useLinksFirestore(user?.uid)
+  const { user, loading, login, register } = useAuth()
 
-  if(loading) return <div>Carregando...</div>
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[var(--color-paper)]">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[var(--color-accent)] border-t-transparent"></div>
+      </div>
+    )
+  }
 
   if (!user) {
     return <AuthForm onLogin={login} onRegister={register} />
   }
 
-  return (
-    <main>
-      <button onClick={() => logout()}>Sair</button>
-
-      <LinkForm
-        onAdd={(l: Omit<Link, 'id'>) => add({ ...l, userId: user.uid })}
-      />
-
-      <LinkList
-        links={links}
-        onRemove={(id: string) => remove(id)}
-        />
-    </main>
-  )
+  return <Home />
 }
 
 export default App

@@ -1,11 +1,9 @@
+// src/components/AuthForm.tsx
 import { useState } from 'react'
+import { useAuth } from '../hooks/useAuth'
 
-type Props = {
-  onLogin: (email: string, pass: string) => Promise<unknown>
-  onRegister: (email: string, pass: string) => Promise<unknown>
-}
-
-export function AuthForm({ onLogin, onRegister }: Props) {
+export function AuthForm() {
+  const { login, register } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -16,9 +14,9 @@ export function AuthForm({ onLogin, onRegister }: Props) {
     setIsLoading(true)
     try {
       if (action === 'login') {
-        await onLogin(email, password)
+        await login(email, password)
       } else {
-        await onRegister(email, password)
+        await register(email, password)
       }
     } catch (err: any) {
       setError(err.message || 'Ocorreu um erro. Tente novamente.')
@@ -30,13 +28,16 @@ export function AuthForm({ onLogin, onRegister }: Props) {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-[var(--color-paper)] via-white to-[var(--color-accent-light)]">
       <div className="w-full max-w-md relative">
-        {/* Elemento decorativo de fundo */}
+        {/* Elementos decorativos */}
         <div className="absolute -top-10 -right-10 w-40 h-40 bg-[var(--color-accent)] opacity-10 rounded-full blur-3xl" />
         <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-[var(--color-accent)] opacity-10 rounded-full blur-3xl" />
 
         <div className="relative bg-white/80 backdrop-blur-sm border border-white/30 shadow-2xl rounded-2xl p-8 md:p-10 transition-all duration-300 hover:shadow-[var(--color-accent)]/20 hover:shadow-2xl">
-          {/* Cabeçalho com ícone */}
+          {/* Cabeçalho */}
           <div className="flex flex-col items-center text-center mb-8">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent-light)] flex items-center justify-center text-white text-3xl shadow-lg shadow-[var(--color-accent)]/30 mb-4">
+              ✦
+            </div>
             <h2 className="font-serif text-3xl text-[var(--color-ink)] tracking-tight">
               Olá, <span className="text-[var(--color-accent)]">seja bem vindo!</span>
             </h2>
@@ -51,9 +52,7 @@ export function AuthForm({ onLogin, onRegister }: Props) {
                 E-mail
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)] text-lg">
-                  ✉
-                </span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)] text-lg">✉</span>
                 <input
                   id="email"
                   type="email"
@@ -71,8 +70,7 @@ export function AuthForm({ onLogin, onRegister }: Props) {
                 Senha
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)] text-lg">
-                </span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)] text-lg">🔒</span>
                 <input
                   id="password"
                   type="password"

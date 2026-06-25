@@ -10,7 +10,6 @@ import {
   onSnapshot,
   getDocs,
   updateDoc,
-  Timestamp
 } from 'firebase/firestore'
 import { db } from '../firebase'
 import type { Link, LinkWithId } from '../types'
@@ -23,7 +22,6 @@ export async function createLink(link: Omit<Link, 'createdAt'> & { userId: strin
     userId: link.userId,
     createdAt: serverTimestamp(),
   })
-
   return docRef.id
 }
 
@@ -40,14 +38,12 @@ export async function deleteLink(id: string) {
 export function subscribeToUserLinks(
   userId: string,
   cb: (links: LinkWithId[]) => void
-): Unsubscribe {
-
+): () => void {
   const q = query(
     linksCol,
     where('userId', '==', userId),
     orderBy('createdAt', 'desc')
   )
-
   return onSnapshot(q, (snap) => {
     const items: LinkWithId[] = snap.docs.map((doc) => ({
       id: doc.id,

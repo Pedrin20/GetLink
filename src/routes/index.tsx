@@ -23,6 +23,7 @@ export function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/u/:userId" element={<PublicProfile />} />
       <Route
         path="/"
         element={

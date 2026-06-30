@@ -6,7 +6,7 @@ type Props = {
 }
 
 export function MainLayout({ children }: Props) {
-  const { logout } = useAuth()
+  const { logout } = useAuth() 
 
   return (
     <div className="min-h-screen bg-[var(--color-paper)]">

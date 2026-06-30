@@ -1,4 +1,3 @@
-// src/services/profileService.ts
 import { doc, getDoc, updateDoc, setDoc } from 'firebase/firestore'
 import { db } from '../firebase'
 

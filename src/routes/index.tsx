@@ -2,8 +2,9 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { Home } from '../pages/Home'
-import { Login } from '../pages/Login' // ← importe a página
+import { Login } from '../pages/Login'
 import { MainLayout } from '../layouts/MainLayout'
+import { PublicProfile } from '../pages/PublicProfile'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -23,7 +24,7 @@ export function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      <Route path="/u/:userId" element={<PublicProfile />} />
+      
       <Route
         path="/"
         element={
@@ -34,7 +35,21 @@ export function AppRoutes() {
           </PrivateRoute>
         }
       />
+
       <Route path="*" element={<Navigate to="/" replace />} />
+
+      <Route path="/profile" element={
+  <PrivateRoute>
+    <MainLayout>
+      <PublicProfile />
+    </MainLayout>
+  </PrivateRoute>
+} />
+<Route path="/profile/:userId" element={
+  <MainLayout>
+    <PublicProfile />
+  </MainLayout>
+} />
     </Routes>
   )
 }

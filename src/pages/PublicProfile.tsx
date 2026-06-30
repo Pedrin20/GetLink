@@ -12,11 +12,9 @@ export function PublicProfile() {
 
   useEffect(() => {
     if (!userId) return
-    // Buscar perfil
     getProfile(userId).then((data) => {
       setProfile(data)
     })
-    // Buscar links em tempo real
     const unsub = subscribeToUserLinks(userId, (items) => {
       setLinks(items)
       setLoading(false)

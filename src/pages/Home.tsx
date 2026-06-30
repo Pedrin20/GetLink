@@ -1,15 +1,16 @@
-// src/pages/Home.tsx
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useLinks } from '../hooks/useLinks'
 import { LinkForm } from '../components/LinkForm'
 import { LinkList } from '../components/LinkList'
 import type { Link } from '../types'
+import { useNavigate } from 'react-router-dom'
 
 export function Home() {
   const { user } = useAuth()
   const { links, loading, addLink, removeLink } = useLinks(user?.uid)
   const [showAddForm, setShowAddForm] = useState(false)
+  const navigate = useNavigate();
 
   if (loading) {
     return (
@@ -23,6 +24,12 @@ export function Home() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
+          <button
+            onClick={() => navigate('/profile')}
+            className="text-[var(--color-accent)] hover:underline"
+          >
+           Ver seu perfil
+           </button>
           <h1 className="text-3xl font-serif text-[var(--color-ink)]">
             Seus Links
           </h1>

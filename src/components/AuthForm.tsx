@@ -1,6 +1,7 @@
 // src/components/AuthForm.tsx
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
+import { createUserProfile } from '../services/userService'
 
 export function AuthForm() {
   const { login, register } = useAuth()
@@ -10,13 +11,19 @@ export function AuthForm() {
   const [isLoading, setIsLoading] = useState(false)
 
   const handleAction = async (action: 'login' | 'register') => {
+
     setError(null)
     setIsLoading(true)
     try {
       if (action === 'login') {
         await login(email, password)
       } else {
-        await register(email, password)
+        const userCredential = await register(email, password);
+        const uid = userCredential.user.uid;
+
+        const username = email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '') + Math.floor(Math.random() * 1000);
+
+        await createUserProfile(uid, username); { profile , loading, error };
       }
     } catch (err: any) {
       setError(err.message || 'Ocorreu um erro. Tente novamente.')

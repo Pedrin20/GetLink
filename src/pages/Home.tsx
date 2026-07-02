@@ -25,11 +25,18 @@ export function Home() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <button
-            onClick={() => navigate('/profile')}
-            className="text-[var(--color-accent)] hover:underline"
-          >
-           Ver seu perfil
-           </button>
+            onClick={() => navigate('/profile/edit')}
+            className="text-sm text-[var(--color-accent)] hover:underline"
+         >
+          Editar perfil
+         </button>
+         <br />
+         <button
+          onClick={() => navigate('/' + user?.displayName?.toLowerCase() || '')}
+          className="text-[var(--color-accent)] hover:underline"
+         >
+          Ver seu perfil público
+        </button>
           <h1 className="text-3xl font-serif text-[var(--color-ink)]">
             Seus Links
           </h1>

@@ -5,12 +5,26 @@ import { LinkForm } from '../components/LinkForm'
 import { LinkList } from '../components/LinkList'
 import type { Link } from '../types'
 import { useNavigate } from 'react-router-dom'
+import { useUserProfile } from '../hooks/useUserProfile'
 
 export function Home() {
   const { user } = useAuth()
   const { links, loading, addLink, removeLink } = useLinks(user?.uid)
   const [showAddForm, setShowAddForm] = useState(false)
   const navigate = useNavigate();
+  const { profile: currentProfile, loading: profileLoading } = useUserProfile(user?.uid);
+
+  if (profileLoading) {
+    return <div className="flex justify-center py-20"><div className="animate-spin rounded-full h-12 w-12 border-4 border-[var(--color-accent)] border-t-transparent" /></div>;
+  }
+
+  const handleViewProfile = () => {
+    if (currentProfile?.username) {
+      navigate('/' + currentProfile.username);
+    } else {
+      navigate('/profile/edit');
+    }
+  }
 
   if (loading) {
     return (
@@ -32,11 +46,11 @@ export function Home() {
          </button>
          <br />
          <button
-          onClick={() => navigate('/' + user?.displayName?.toLowerCase() || '')}
-          className="text-[var(--color-accent)] hover:underline"
-         >
-          Ver seu perfil público
-        </button>
+            onClick={handleViewProfile}
+            className="text-sm text-[var(--color-accent)] hover:underline"
+          >
+            Ver seu perfil público
+          </button>
           <h1 className="text-3xl font-serif text-[var(--color-ink)]">
             Seus Links
           </h1>

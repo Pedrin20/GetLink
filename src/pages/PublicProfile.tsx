@@ -1,34 +1,34 @@
 import { useParams } from 'react-router-dom';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { useLinks } from '../hooks/useLinks';
-import { LinkList } from '../components/LinkList';
-import { MainLayout } from '../layouts/MainLayout';
 
 export function PublicProfile() {
-  const { username } = useParams<{ username: string }>(); // captura /@username
+  const { username } = useParams<{ username: string }>();
   const { profile, loading: profileLoading, error } = useUserProfile(undefined, username);
-  const { links, loading: linksLoading } = useLinks(profile?.id); // profile.id é o uid
+  const { links, loading: linksLoading } = useLinks(profile?.id);
 
   if (profileLoading || linksLoading) {
     return (
-      <MainLayout>
-        <div className="flex justify-center items-center min-h-[60vh]">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-[var(--color-accent)] border-t-transparent" />
-        </div>
-      </MainLayout>
+      <div className="min-h-screen flex items-center justify-center bg-[var(--color-paper)]">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[var(--color-accent)] border-t-transparent" />
+      </div>
     );
   }
 
   if (error || !profile) {
     return (
-      <MainLayout>
-        <div className="text-center py-20 text-[var(--color-muted)]">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--color-paper)] text-[var(--color-muted)]">
+        <div className="text-center">
           <p className="text-2xl mb-2">😕</p>
           <p>Perfil não encontrado</p>
         </div>
-      </MainLayout>
+      </div>
     );
   }
+
+console.log('username da URL:', username);
+console.log('profile:', profile);
+console.log('error:', error);
 
   return (
     <div 
@@ -51,7 +51,6 @@ export function PublicProfile() {
         {links.length === 0 ? (
           <p className="text-center text-[var(--color-muted)]">Nenhum link disponível.</p>
         ) : (
-          // Usamos LinkList sem função de remover (perfil público)
           links.map((link) => (
             <a
               key={link.id}

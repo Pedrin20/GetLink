@@ -18,12 +18,13 @@ export function AuthForm() {
       if (action === 'login') {
         await login(email, password)
       } else {
+
         const userCredential = await register(email, password);
         const uid = userCredential.user.uid;
 
         const username = email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '') + Math.floor(Math.random() * 1000);
 
-        await createUserProfile(uid, username); { profile , loading, error };
+        await createUserProfile(uid, username);
       }
     } catch (err: any) {
       setError(err.message || 'Ocorreu um erro. Tente novamente.')

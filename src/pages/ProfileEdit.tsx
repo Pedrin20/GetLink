@@ -1,4 +1,3 @@
-// src/pages/ProfileEdit.tsx
 import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useUserProfile } from '../hooks/useUserProfile';

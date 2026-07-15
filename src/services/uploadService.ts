@@ -1,3 +1,6 @@
+const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
 export async function uploadAvatar(file: File): Promise<string> {
   const formData = new FormData();
   formData.append('file', file);
@@ -6,7 +9,7 @@ export async function uploadAvatar(file: File): Promise<string> {
 
   try {
     const response = await fetch(
-      `https://api.cloudinary.com/v1_1/seu_cloud_name/image/upload`,
+      `CLOUDINARY_URL=cloudinary://<your_api_key>:<your_api_secret>@d9qi04su`,
       {
         method: 'POST',
         body: formData,

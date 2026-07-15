@@ -4,6 +4,7 @@ import { useUserProfile } from '../hooks/useUserProfile';
 import { updateUserProfile } from '../services/userService';
 import { Camera, X, Check, Palette } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { uploadAvatar } from '../services/uploadService';
 
 const COLOR_PALETTE = [
   '#B85C38', 
@@ -63,38 +64,27 @@ export function ProfileEdit() {
     setMessage(null);
 
     try {
-      let avatarUrl = avatarPreview;
+    let uploadedAvatarUrl = avatarUrl;
 
-      if (avatarFile) {
-        try {
-          await deleteAvatar(user.uid).catch(() => {});
-          avatarUrl = await uploadAvatar(user.uid, avatarFile);
-        } catch (uploadError: any) {
-          setMessage({ type: 'error', text: `Erro no upload: ${uploadError.message}` });
-          setSaving(false);
-          return;
-        }
-      } 
-      else if (!avatarPreview && profile?.avatarUrl) {
-        await deleteAvatar(user.uid).catch(() => {});
-        avatarUrl = '';
-      }
+  if (avatarFile) {
+    uploadedAvatarUrl = await uploadAvatar(avatarFile);
+  }
 
-      await updateUserProfile(user.uid, {
-        displayName,
-        bio,
-        themeColor,
-        avatarUrl,
-      });
+  await updateUserProfile(user.uid, {
+    displayName,
+    bio,
+    themeColor,
+    avatarUrl: uploadedAvatarUrl,
+  });
 
-      setMessage({ type: 'success', text: '✅ Perfil atualizado com sucesso!' });
-      setTimeout(() => setMessage(null), 3000);
-    } catch (err: any) {
-      setMessage({ type: 'error', text: `❌ Erro ao atualizar: ${err.message}` });
-    } finally {
-      setSaving(false);
-    }
-  };
+  setAvatarPreview(uploadedAvatarUrl);
+  setAvatarUrl(uploadedAvatarUrl);
+  setAvatarFile(null);
+
+  setMessage({ type: 'success', text: '✅ Perfil atualizado com sucesso!' });
+} catch (err: any) {
+  setMessage({ type: 'error', text: '❌ Erro ao atualizar: ' + err.message });
+}
 
   if (loading) {
     return (

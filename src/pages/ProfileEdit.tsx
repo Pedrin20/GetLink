@@ -58,33 +58,43 @@ export function ProfileEdit() {
   };
 
   const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) return;
-    setSaving(true);
-    setMessage(null);
+  e.preventDefault();
+  if (!user) return;
 
-    try {
+  setSaving(true);
+  setMessage(null);
+
+  try {
     let uploadedAvatarUrl = avatarUrl;
 
-  if (avatarFile) {
-    uploadedAvatarUrl = await uploadAvatar(avatarFile);
+    if (avatarFile) {
+      uploadedAvatarUrl = await uploadAvatar(avatarFile);
+    }
+
+    await updateUserProfile(user.uid, {
+      displayName,
+      bio,
+      themeColor,
+      avatarUrl: uploadedAvatarUrl,
+    });
+
+    setAvatarPreview(uploadedAvatarUrl);
+    setAvatarUrl(uploadedAvatarUrl);
+    setAvatarFile(null);
+
+    setMessage({
+      type: 'success',
+      text: '✅ Perfil atualizado com sucesso!',
+    });
+  } catch (err: any) {
+    setMessage({
+      type: 'error',
+      text: '❌ Erro ao atualizar: ' + err.message,
+    });
+  } finally {
+    setSaving(false);
   }
-
-  await updateUserProfile(user.uid, {
-    displayName,
-    bio,
-    themeColor,
-    avatarUrl: uploadedAvatarUrl,
-  });
-
-  setAvatarPreview(uploadedAvatarUrl);
-  setAvatarUrl(uploadedAvatarUrl);
-  setAvatarFile(null);
-
-  setMessage({ type: 'success', text: '✅ Perfil atualizado com sucesso!' });
-} catch (err: any) {
-  setMessage({ type: 'error', text: '❌ Erro ao atualizar: ' + err.message });
-}
+};
 
   if (loading) {
     return (
@@ -153,8 +163,6 @@ export function ProfileEdit() {
               </div>
             </div>
 
-
-            {/* Nome */}
             <div>
               <label htmlFor="displayName" className="block text-sm font-medium text-[var(--color-ink)] mb-1">
                 Nome de exibição

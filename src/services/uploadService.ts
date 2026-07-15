@@ -4,27 +4,20 @@ const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 export async function uploadAvatar(file: File): Promise<string> {
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('upload_preset', 'avatar_upload');
-  formData.append('cloud_name', 'seu_cloud_name');
+  formData.append('upload_preset', UPLOAD_PRESET);
 
-  try {
-    const response = await fetch(
-      `CLOUDINARY_URL=cloudinary://<your_api_key>:<your_api_secret>@d9qi04su`,
-      {
-        method: 'POST',
-        body: formData,
-      }
-    );
+  const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error?.message || 'Erro no upload');
-    }
+  const response = await fetch(url, {
+    method: 'POST',
+    body: formData,
+  });
 
-    const data = await response.json();
-    return data.secure_url; // URL da imagem
-  } catch (error) {
-    console.error('❌ Erro no upload para Cloudinary:', error);
-    throw error;
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error?.message || 'Erro no upload');
   }
+
+  const data = await response.json();
+  return data.secure_url;
 }

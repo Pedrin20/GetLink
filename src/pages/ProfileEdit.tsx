@@ -7,14 +7,14 @@ import { useNavigate } from 'react-router-dom';
 import { uploadAvatar } from '../services/uploadService';
 
 const COLOR_PALETTE = [
-  '#B85C38', 
-  '#2D3748', 
-  '#1A365D', 
-  '#2F855A', 
-  '#6B46C1', 
-  '#C05621', 
-  '#B83280', 
-  '#0D9488', 
+  '#B85C38',
+  '#2D3748',
+  '#1A365D',
+  '#2F855A',
+  '#6B46C1',
+  '#C05621',
+  '#B83280',
+  '#0D9488',
 ];
 
 export function ProfileEdit() {
@@ -299,6 +299,31 @@ export function ProfileEdit() {
               Esta é uma prévia de como seu perfil público será exibido.
             </p>
           </div>
+
+          {profile?.username && (
+  <div className="mt-6 p-4 bg-[var(--color-accent-light)] rounded-xl border border-[var(--color-accent)]/20">
+    <p className="text-sm text-[var(--color-ink)] font-medium mb-2">🔗 Seu link público</p>
+    <div className="flex items-center gap-2">
+      <input
+        type="text"
+        readOnly
+        value={`${window.location.origin}/${profile.username}`}
+        className="flex-1 bg-white border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm text-[var(--color-ink)] focus:outline-none"
+      />
+      <button
+        onClick={() => {
+          navigator.clipboard.writeText(`${window.location.origin}/${profile.username}`);
+          setMessage({ type: 'success', text: '✅ Link copiado para a área de transferência!' });
+          setTimeout(() => setMessage(null), 3000);
+        }}
+        className="px-4 py-2 bg-[var(--color-accent)] text-white text-sm font-medium rounded-lg hover:brightness-110 transition"
+      >
+        Copiar
+      </button>
+    </div>
+  </div>
+)}
+
         </div>
       </div>
     </div>

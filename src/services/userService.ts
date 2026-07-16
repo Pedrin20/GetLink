@@ -29,3 +29,26 @@ export async function getUserProfileByUsername(username: string) {
 export async function updateUserProfile(uid: string, data: Partial<Omit<UserProfile, 'id' | 'username' | 'createdAt'>>) {
   await updateDoc(doc(db, 'users', uid), data);
 }
+
+export async function isUsernameAvailable ( username: string ): Promise<boolean> {
+  const q = query(collection(db, 'users'), where('username', '==', username));
+  const snap = await getDocs(q);
+  return snap.empty;
+}
+
+export async function generateUniqueUsername(base: string): Promise<string> {
+  let username = base.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+  if (!username) username = 'user';
+
+  let available = await  isUsernameAvailable(username);
+  if (available) return username;
+
+  let counter = 1;
+  while (!available) {
+    const newUsername = `${username}${counter}`;
+    available = await isUsernameAvailable(newUsername);
+    if (available) return newUsername;
+    counter++;
+  }
+  return username;
+}

@@ -1,7 +1,6 @@
-// src/components/AuthForm.tsx
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
-import { createUserProfile } from '../services/userService'
+import { createUserProfile, generateUniqueUsername } from '../services/userService'
 
 export function AuthForm() {
   const { login, register } = useAuth()
@@ -22,7 +21,8 @@ export function AuthForm() {
         const userCredential = await register(email, password);
         const uid = userCredential.user.uid;
 
-        const username = email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '') + Math.floor(Math.random() * 1000);
+        const baseUsername = email.split('@')[0]
+        const username = await generateUniqueUsername(baseUsername);
 
         await createUserProfile(uid, username);
       }

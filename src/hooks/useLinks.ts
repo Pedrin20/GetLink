@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import type { Link } from '../types'
-import { createLink, deleteLink, subscribeToUserLinks } from '../services/linkService'
+import type { Link, LinkInput } from '../types'
+import { createLink, deleteLink, subscribeToUserLinks, updateLink as updateLinkService } from '../services/linkService'
 
 export function useLinks(userId?: string) {
   const [links, setLinks] = useState<Link[]>([])
@@ -30,5 +30,9 @@ export function useLinks(userId?: string) {
     await deleteLink(id)
   }
 
-  return { links, loading, addLink, removeLink }
+  async function updateLink(id: string, data: Partial<Omit<Link, 'id' | 'userId' | 'createdAt'>>) {
+    await updateLinkService(id, data)
+  }
+
+  return { links, loading, addLink, removeLink, updateLink }
 }

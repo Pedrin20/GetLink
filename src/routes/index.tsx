@@ -1,4 +1,3 @@
-// src/routes/index.tsx
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Home } from '../pages/Home';
@@ -6,6 +5,7 @@ import { Login } from '../pages/Login';
 import { PublicProfile } from '../pages/PublicProfile';
 import { ProfileEdit } from '../pages/ProfileEdit';
 import { MainLayout } from '../layouts/MainLayout';
+import { Redirect } from '../pages/Redirect'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -31,6 +31,7 @@ export function AppRoutes() {
           </MainLayout>
         </PrivateRoute>
       } />
+      <Route path="/r/:linkId" element={<Redirect />} />
       <Route path="/:username" element={<PublicProfile />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

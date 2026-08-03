@@ -1,38 +1,83 @@
 import type { Link } from "../types"
+import { useState } from 'react'
+import { Edit2, Trash2, Eye, EyeOff, BarChart2 } from 'lucide-react'
 
 type Props = {
     item: Link
     onRemove: (id: string) => void
+    onEdit?: (link: Link) => void
 }
 
-export function LinkItem({ item, onRemove }: Props) {
-    return (
-        <li className="flex flex-col gap-4 rounded-2xl border border-[var(--color-border)] bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:flex-row sm:items-center sm:justify-between sm:p-5">
-            <div className="min-w-0 flex-1">
-                <h3 className="truncate text-base font-semibold text-[var(--color-ink)] sm:text-lg">
-                    {item.title}
-                </h3>
-                <p className="mt-1 line-clamp-2 text-sm text-[var(--color-muted)]">
-                    {item.description}
-                </p>
-            </div>
+export function LinkItem({ link, onRemove, onEdit }: Props) {
+  const [isDeleting, setIsDeleting] = useState(false)
 
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                <a
-                    className="inline-flex items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-accent-light)] px-4 py-2 text-sm font-medium text-[var(--color-accent)] transition hover:border-[var(--color-accent)] hover:bg-white"
-                    href={item.url.startsWith('http') ? item.url : `https://${item.url}`}
-                    target="_blank"
-                    rel="noreferrer"
-                >
-                    Abrir
-                </a>
-                <button
-                    className="inline-flex items-center justify-center rounded-xl border border-[var(--color-border)] bg-white px-4 py-2 text-sm font-medium text-[var(--color-ink)] transition hover:bg-[var(--color-accent-light)]"
-                    onClick={() => onRemove(item.id)}
-                >
-                    Remover
-                </button>
-            </div>
-        </li>
-    )
+  const handleRemove = async () => {
+    if (window.confirm('Remover este link?')) {
+      setIsDeleting(true)
+      await onRemove(link.id)
+      setIsDeleting(false)
+    }
+  }
+
+    return (
+    <div className="group bg-white rounded-xl border border-[var(--color-border)] p-4 hover:shadow-md hover:border-[var(--color-accent)]/30 transition-all duration-200">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <h3 className="text-base font-medium text-[var(--color-ink)] truncate">
+              {link.title || 'Sem título'}
+            </h3>
+            {!link.isActive && (
+              <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                Inativo
+              </span>
+            )}
+          </div>
+          <a
+            href={`/r/${link.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-[var(--color-muted)] hover:text-[var(--color-accent)] truncate block"
+            onClick={(e) => {
+            }}
+          >
+            {link.url}
+          </a>
+          {link.description && (
+            <p className="text-sm text-[var(--color-muted)]/70 truncate mt-0.5">
+              {link.description}
+            </p>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-1 text-xs text-[var(--color-muted)] bg-[var(--color-paper)] px-2 py-1 rounded-full">
+            <BarChart2 size={14} />
+            <span>{link.clicks || 0}</span>
+          </div>
+
+          {onEdit && (
+            <button
+              onClick={() => onEdit(link)}
+              className="p-1.5 text-[var(--color-muted)] hover:text-[var(--color-accent)] transition rounded-lg hover:bg-[var(--color-accent-light)]"
+            >
+              <Edit2 size={16} />
+            </button>
+          )}
+
+          <button
+            onClick={handleRemove}
+            disabled={isDeleting}
+            className="p-1.5 text-[var(--color-muted)] hover:text-red-500 transition rounded-lg hover:bg-red-50"
+          >
+            {isDeleting ? (
+              <span className="animate-spin inline-block w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full" />
+            ) : (
+              <Trash2 size={16} />
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
 }

@@ -4,16 +4,19 @@ import { useLinks } from '../hooks/useLinks'
 import { useUserProfile } from '../hooks/useUserProfile'
 import { LinkForm } from '../components/LinkForm'
 import { LinkList } from '../components/LinkList'
+import { LinkEditModal } from '../components/LinkEditModal'
 import { QRCodeModal } from '../components/QRCodeModal'
 import type { Link } from '../types'
 import { useNavigate } from 'react-router-dom'
+import { reorderLinks } from '../services/linkService'
 
 export function Home() {
   const { user } = useAuth()
-  const { links, loading, addLink, removeLink } = useLinks(user?.uid)
+  const { links, loading, addLink, removeLink, updateLink } = useLinks(user?.uid)
   const { profile: currentProfile, loading: profileLoading } = useUserProfile(user?.uid)
   const [showAddForm, setShowAddForm] = useState(false)
   const [isQRModalOpen, setIsQRModalOpen] = useState(false)
+  const [editingLink, setEditingLink] = useState<Link | null>(null)
   const navigate = useNavigate()
 
   if (profileLoading) {
@@ -48,10 +51,28 @@ export function Home() {
     )
   }
 
+  const handleReorder = async (newLinks: Link[]) => {
+    const updates = newLinks.map((link, index) => ({
+      id: link.id,
+      order: index,
+    }))
+    await reorderLinks(updates)
+  }
+
+  const handleEditLink = (link: Link) => {
+    setEditingLink(link)
+  }
+
+  const handleSaveEdit = async (updatedLink: Partial<Link>) => {
+    if (editingLink) {
+      await updateLink(editingLink.id, updatedLink)
+      setEditingLink(null)
+    }
+  }
+
   return (
     <>
       <div className="space-y-6">
-        {/* Cabeçalho */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <div className="flex flex-wrap items-center gap-3 mb-1">
@@ -114,6 +135,21 @@ export function Home() {
           <LinkList links={links} onRemove={removeLink} />
         )}
       </div>
+
+      <LinkList
+        links={links}
+        onRemove={removeLink}
+        onEdit={handleEditLink}
+        onReorder={handleReorder}
+      />
+
+      {editingLink && (
+        <LinkEditModal
+          link={editingLink}
+          onSave={handleSaveEdit}
+          onClose={() => setEditingLink(null)}
+        />
+      )}
 
       <QRCodeModal
         isOpen={isQRModalOpen}

@@ -5,6 +5,9 @@ export interface Link {
   description?: string
   userId: string
   createdAt?: any
+  clicks?: number
+  order?: number
+  isActive?: boolean  
 }
 
 export interface UserProfile {
@@ -18,4 +21,4 @@ export interface UserProfile {
 
 }
 
-export type LinkInput = Omit<Link, 'id' | 'createdAt'>
+export type LinkInput = Omit<Link, 'id' | 'createdAt' | 'clicks' | 'order'>

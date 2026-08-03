@@ -10,6 +10,8 @@ import {
   onSnapshot,
   getDocs,
   updateDoc,
+  writeBatch,
+  increment,
 } from 'firebase/firestore'
 import { db } from '../firebase'
 import type { Link, LinkWithId } from '../types'
@@ -21,13 +23,23 @@ export async function createLink(link: Omit<Link, 'createdAt'> & { userId: strin
     ...link,
     userId: link.userId,
     createdAt: serverTimestamp(),
+    clicks: 0,
+    order: 0,
+    isActive: true,
   })
   return docRef.id
 }
 
-export async function updateLink(id: string, data: Partial<Link>) {
+export async function updateLink(id: string, data: Partial<Omit<Link, 'id' | 'userId' | 'createdAt'>>) {
   const ref = doc(db, 'links', id)
   await updateDoc(ref, data)
+}
+
+export async function incrementClick(id: string) {
+  const ref = doc(db, 'links', id)
+  await updateDoc(ref, {
+    clicks: increment(1),
+  })
 }
 
 export async function deleteLink(id: string) {
@@ -42,15 +54,36 @@ export function subscribeToUserLinks(
   const q = query(
     linksCol,
     where('userId', '==', userId),
+    orderBy('order', 'asc'),
     orderBy('createdAt', 'desc')
   )
+
   return onSnapshot(q, (snap) => {
-    const items: LinkWithId[] = snap.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as LinkWithId[]
+    const items: LinkWithId[] = snap.docs.map((doc) => {
+      const data = doc.data()
+      return {
+        id: doc.id,
+        title: data.title || '',
+        url: data.url || '',
+        userId: data.userId || '',
+        description: data.description || '',
+        createdAt: data.createdAt || null,
+        clicks: data.clicks || 0,
+        order: data.order || 0,
+        isActive: data.isActive ?? true,
+      } as LinkWithId
+    })
     cb(items)
   })
+}
+
+export async function reorderLinks(links: { id: string; order: number }[]) {
+  const batch = writeBatch(db)
+  links.forEach(({ id, order }) => {
+    const ref = doc(db, 'links', id)
+    batch.update(ref, { order })
+  })
+  await batch.commit()
 }
 
 export async function fetchUserLinks(userId: string): Promise<LinkWithId[]> {
@@ -59,9 +92,20 @@ export async function fetchUserLinks(userId: string): Promise<LinkWithId[]> {
     where('userId', '==', userId),
     orderBy('createdAt', 'desc')
   )
+  
   const snap = await getDocs(q)
-  return snap.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as LinkWithId[]
+  return snap.docs.map((doc) => {
+    const data = doc.data()
+    return {
+      id: doc.id,
+      title: data.title || '',
+      url: data.url || '',
+      userId: data.userId || '',
+      description: data.description || '',
+      createdAt: data.createdAt || null,
+      clicks: data.clicks || 0,
+      order: data.order || 0,
+      isActive: data.isActive ?? true,
+    } as LinkWithId
+  })
 }

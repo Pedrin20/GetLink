@@ -36,12 +36,10 @@ export function AuthForm() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-[var(--color-paper)] via-white to-[var(--color-accent-light)]">
       <div className="w-full max-w-md relative">
-        {/* Elementos decorativos */}
         <div className="absolute -top-10 -right-10 w-40 h-40 bg-[var(--color-accent)] opacity-10 rounded-full blur-3xl" />
         <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-[var(--color-accent)] opacity-10 rounded-full blur-3xl" />
 
         <div className="relative bg-white/80 backdrop-blur-sm border border-white/30 shadow-2xl rounded-2xl p-8 md:p-10 transition-all duration-300 hover:shadow-[var(--color-accent)]/20 hover:shadow-2xl">
-          {/* Cabeçalho */}
           <div className="flex flex-col items-center text-center mb-8">
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent-light)] flex items-center justify-center text-white text-3xl shadow-lg shadow-[var(--color-accent)]/30 mb-4">
               ✦

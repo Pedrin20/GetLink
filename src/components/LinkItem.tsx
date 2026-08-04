@@ -57,25 +57,13 @@ export function LinkItem({ link, onRemove, onEdit }: Props) {
           </div>
 
           {onEdit && (
-            <button
-              onClick={() => onEdit(link)}
-              className="p-1.5 text-[var(--color-muted)] hover:text-[var(--color-accent)] transition rounded-lg hover:bg-[var(--color-accent-light)]"
-            >
-              <Edit2 size={16} />
-            </button>
-          )}
-
-          <button
-            onClick={handleRemove}
-            disabled={isDeleting}
-            className="p-1.5 text-[var(--color-muted)] hover:text-red-500 transition rounded-lg hover:bg-red-50"
-          >
-            {isDeleting ? (
-              <span className="animate-spin inline-block w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full" />
-            ) : (
-              <Trash2 size={16} />
-            )}
-          </button>
+      <button onClick={() => onEdit(link)} className="p-1 text-[var(--color-muted)] hover:text-[var(--color-accent)] transition rounded hover:bg-[var(--color-accent-light)]">
+        <Edit2 size={14} />
+      </button>
+    )}
+    <button onClick={handleRemove} className="p-1 text-[var(--color-muted)] hover:text-red-500 transition rounded hover:bg-red-50">
+      <Trash2 size={14} />
+    </button>
         </div>
       </div>
     </div>

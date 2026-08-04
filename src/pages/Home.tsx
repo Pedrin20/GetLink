@@ -114,26 +114,6 @@ export function Home() {
             </button>
           </div>
         </div>
-
-        {showAddForm && (
-          <div className="bg-white p-6 rounded-xl border border-[var(--color-border)] shadow-sm">
-            <LinkForm
-              onAdd={(newLink: Omit<Link, 'id'>) => {
-                addLink({ ...newLink, userId: user!.uid })
-                setShowAddForm(false)
-              }}
-            />
-          </div>
-        )}
-
-        {links.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-xl border border-[var(--color-border)] border-dashed">
-            <div className="text-4xl mb-3">📎</div>
-            <p className="text-[var(--color-muted)]">Nenhum link ainda. Que tal criar um?</p>
-          </div>
-        ) : (
-          <LinkList links={links} onRemove={removeLink} />
-        )}
       </div>
 
       <LinkList

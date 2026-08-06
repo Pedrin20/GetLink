@@ -123,6 +123,13 @@ return (
               <BarChart3 size={18} />
               Personalizar perfil
             </button>
+
+            <button
+              onClick={() => navigate('/' + profile.username)}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[var(--color-border)] text-[var(--color-ink)] font-medium rounded-xl hover:bg-[var(--color-accent-light)] transition"
+            >
+              Ver perfil público
+            </button>
           </div>
         </div>
 

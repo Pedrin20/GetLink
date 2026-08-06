@@ -1,3 +1,4 @@
+// src/pages/Redirect.tsx
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { doc, getDoc, updateDoc, increment } from 'firebase/firestore'
@@ -5,7 +6,6 @@ import { db } from '../firebase'
 
 export function Redirect() {
   const { linkId } = useParams<{ linkId: string }>()
-  const navigate = useNavigate()
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -27,10 +27,12 @@ export function Redirect() {
         const data = snap.data()
         const url = data.url
 
+        // Incrementa contador de cliques
         await updateDoc(ref, {
           clicks: increment(1),
         })
 
+        // Redireciona para a URL
         window.location.href = url.startsWith('http') ? url : `https://${url}`
       } catch (err) {
         setError('Erro ao redirecionar')
@@ -39,7 +41,7 @@ export function Redirect() {
     }
 
     redirect()
-  }, [linkId, navigate])
+  }, [linkId])
 
   if (error) {
     return (
@@ -60,4 +62,4 @@ export function Redirect() {
       </div>
     </div>
   )
-}					
+}

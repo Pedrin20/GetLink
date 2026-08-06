@@ -43,6 +43,7 @@ export function AppRoutes() {
           <Links />
         </PrivateRoute>
       } />
+      <Route path="/r/:linkId" element={<Redirect />} />
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route path="/:username" element={<PublicProfile />} />
       <Route path="*" element={<Navigate to="/" replace />} />

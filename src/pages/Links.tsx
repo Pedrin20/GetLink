@@ -3,24 +3,36 @@ import { useAuth } from '../hooks/useAuth'
 import { useLinks } from '../hooks/useLinks'
 import { LinkList } from '../components/LinkList'
 import { LinkForm } from '../components/LinkForm'
+import { LinkEditModal } from '../components/LinkEditModal'
 import { MainLayout } from '../layouts/MainLayout'
 import { Plus, Search } from 'lucide-react'
 import type { Link } from '../types'
+import { reorderLinks } from '../services/linkService'
 
 export function Links() {
-    const { user } = useAuth()
-    const { links, loading, addLink, removeLink, updateLink } = useLinks(user?.uid)
-    const [ showAddForm, setShowAddForm ] = useState(false)
-    const [ search, setSearch ] = useState('')
+  const { user } = useAuth()
+  const { links, loading, addLink, removeLink, updateLink } = useLinks(user?.uid)
+  const [showAddForm, setShowAddForm] = useState(false)
+  const [search, setSearch] = useState('')
+  const [editingLink, setEditingLink] = useState<Link | null>(null)
 
-    const filteredLinks = links.filter(link =>
-        link.title.toLowerCase().includes(search.toLowerCase()) ||
-        link.url.toLowerCase().includes(search.toLowerCase())
-    )
+  const filteredLinks = links.filter(link =>
+    link.title.toLowerCase().includes(search.toLowerCase()) ||
+    link.url.toLowerCase().includes(search.toLowerCase())
+  )
 
-    return (
+  const handleReorder = async (newLinks: Link[]) => {
+    const updates = newLinks.map((link, index) => ({
+      id: link.id,
+      order: index,
+    }))
+    await reorderLinks(updates)
+  }
+
+  return (
     <MainLayout>
       <div className="space-y-6">
+        {/* Cabeçalho */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-serif text-[var(--color-ink)]">Todos os links</h1>
@@ -68,9 +80,22 @@ export function Links() {
           <LinkList
             links={filteredLinks}
             onRemove={removeLink}
-            onEdit={async (link) => {
-              console.log('Editar link:', link)
+            onEdit={setEditingLink}
+            onReorder={handleReorder}
+          />
+        )}
+
+        {/* Modal de edição */}
+        {editingLink && (
+          <LinkEditModal
+            link={editingLink}
+            onSave={(updatedLink) => {
+              if (editingLink) {
+                updateLink(editingLink.id, updatedLink)
+                setEditingLink(null)
+              }
             }}
+            onClose={() => setEditingLink(null)}
           />
         )}
       </div>

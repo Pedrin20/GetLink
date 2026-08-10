@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useLinks } from '../hooks/useLinks'
+import { useUserProfile } from '../hooks/useUserProfile'
 import { LinkForm } from '../components/LinkForm'
 import { LinkList } from '../components/LinkList'
 import { QRCodeModal } from '../components/QRCodeModal'
@@ -41,6 +42,7 @@ function StatCard({ icon: Icon, label, value, trend }: { icon: any; label: strin
 export function Dashboard() {
     const { user } = useAuth()
     const { links, loading, addLink, removeLink, updateLink } = useLinks(user?.uid)
+    const { profile: currentProfile, loading: profileLoading } = useUserProfile(user?.uid)
     const [showAddForm, setShowAddForm] = useState(false)
     const [isQRModalOpen, setIsQRModalOpen] = useState(false)
     const navigate = useNavigate()
@@ -55,7 +57,7 @@ export function Dashboard() {
         return dateB.getTime() - dateA.getTime()
     }).slice(0, 5)
 
-    if (loading) {
+    if (loading || profileLoading) {
     return (
       <MainLayout>
         <div className="flex justify-center items-center min-h-[60vh]">
@@ -124,12 +126,14 @@ return (
               Personalizar perfil
             </button>
 
-            <button
-              onClick={() => navigate('/' + profile.username)}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[var(--color-border)] text-[var(--color-ink)] font-medium rounded-xl hover:bg-[var(--color-accent-light)] transition"
-            >
-              Ver perfil público
-            </button>
+            {currentProfile?.username && (
+              <button
+                onClick={() => navigate('/' + currentProfile.username)}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[var(--color-border)] text-[var(--color-ink)] font-medium rounded-xl hover:bg-[var(--color-accent-light)] transition"
+              >
+                Ver perfil público
+              </button>
+            )}
           </div>
         </div>
 
@@ -191,8 +195,8 @@ return (
         <QRCodeModal
           isOpen={isQRModalOpen}
           onClose={() => setIsQRModalOpen(false)}
-          url={`${window.location.origin}/${user?.uid}`}
-          username="seu-perfil"
+          url={`${window.location.origin}/${currentProfile?.username || ''}`}
+          username={currentProfile?.username || ''}
         />
       </div>
     </MainLayout>

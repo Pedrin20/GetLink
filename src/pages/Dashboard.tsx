@@ -134,6 +134,14 @@ return (
                 Ver perfil público
               </button>
             )}
+
+            <button
+  onClick={() => navigate('/dashboard/analytics')}
+  className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[var(--color-border)] text-[var(--color-ink)] font-medium rounded-xl hover:bg-[var(--color-accent-light)] transition"
+>
+  <TrendingUp size={18} />
+  Ver analytics
+</button>
           </div>
         </div>
 

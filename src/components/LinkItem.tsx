@@ -1,6 +1,7 @@
 import type { Link } from "../types"
 import { useState } from 'react'
-import { Edit2, Trash2, Eye, EyeOff, BarChart2 } from 'lucide-react'
+import { Edit2, Trash2, BarChart2, Link2 } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 type Props = {
     item: Link
@@ -61,6 +62,16 @@ export function LinkItem({ link, onRemove, onEdit }: Props) {
         <Edit2 size={14} />
       </button>
     )}
+    <button
+        onClick={() => {
+          navigator.clipboard.writeText(`${window.location.origin}/r/${link.id}`)
+          toast.success('Link copiado para a área de transferência! 📋')
+        }}
+        className="p-1 text-[var(--color-muted)] hover:text-[var(--color-accent)] transition rounded hover:bg-[var(--color-accent-light)]"
+        title="Copiar link"
+      >
+        <Link2 size={14} />
+      </button>
     <button onClick={handleRemove} className="p-1 text-[var(--color-muted)] hover:text-red-500 transition rounded hover:bg-red-50">
       <Trash2 size={14} />
     </button>

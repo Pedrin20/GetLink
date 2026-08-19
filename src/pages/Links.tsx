@@ -8,6 +8,7 @@ import { MainLayout } from '../layouts/MainLayout'
 import { Plus, Search } from 'lucide-react'
 import type { Link } from '../types'
 import { reorderLinks } from '../services/linkService'
+import toast from 'react-hot-toast'
 
 export function Links() {
   const { user } = useAuth()
@@ -26,7 +27,41 @@ export function Links() {
       id: link.id,
       order: index,
     }))
-    await reorderLinks(updates)
+    try {
+      await reorderLinks(updates)
+      toast.success('Ordem dos links atualizada! 🔀')
+    } catch (err) {
+      toast.error('Erro ao reordenar links. Tente novamente.')
+    }
+  }
+
+  const handleAddLink = async (newLink: Omit<Link, 'id'>) => {
+    try {
+      await addLink({ ...newLink, userId: user!.uid })
+      toast.success('Link criado com sucesso! 🎉')
+      setShowAddForm(false)
+    } catch (err) {
+      toast.error('Erro ao criar link. Tente novamente.')
+    }
+  }
+
+  const handleRemoveLink = async (id: string) => {
+    try {
+      await removeLink(id)
+      toast.success('Link removido com sucesso! 🗑️')
+    } catch (err) {
+      toast.error('Erro ao remover link. Tente novamente.')
+    }
+  }
+
+  const handleUpdateLink = async (id: string, data: Partial<Link>) => {
+    try {
+      await updateLink(id, data)
+      toast.success('Link atualizado com sucesso! ✏️')
+      setEditingLink(null)
+    } catch (err) {
+      toast.error('Erro ao atualizar link. Tente novamente.')
+    }
   }
 
   return (
@@ -63,12 +98,7 @@ export function Links() {
 
         {showAddForm && (
           <div className="bg-white p-6 rounded-xl border border-[var(--color-border)] shadow-sm">
-            <LinkForm
-              onAdd={(newLink: Omit<Link, 'id'>) => {
-                addLink({ ...newLink, userId: user!.uid })
-                setShowAddForm(false)
-              }}
-            />
+            <LinkForm onAdd={handleAddLink} />
           </div>
         )}
 
@@ -79,7 +109,7 @@ export function Links() {
         ) : (
           <LinkList
             links={filteredLinks}
-            onRemove={removeLink}
+            onRemove={handleRemoveLink}
             onEdit={setEditingLink}
             onReorder={handleReorder}
           />
@@ -89,12 +119,7 @@ export function Links() {
         {editingLink && (
           <LinkEditModal
             link={editingLink}
-            onSave={(updatedLink) => {
-              if (editingLink) {
-                updateLink(editingLink.id, updatedLink)
-                setEditingLink(null)
-              }
-            }}
+            onSave={(updatedLink) => handleUpdateLink(editingLink.id, updatedLink)}
             onClose={() => setEditingLink(null)}
           />
         )}

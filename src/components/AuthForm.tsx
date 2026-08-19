@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { createUserProfile, generateUniqueUsername } from '../services/userService'
+import toast from 'react-hot-toast'
 
 export function AuthForm() {
   const { login, register } = useAuth()
@@ -10,24 +11,24 @@ export function AuthForm() {
   const [isLoading, setIsLoading] = useState(false)
 
   const handleAction = async (action: 'login' | 'register') => {
-
     setError(null)
     setIsLoading(true)
     try {
       if (action === 'login') {
         await login(email, password)
+        toast.success('Login realizado com sucesso! 🎉')
       } else {
-
-        const userCredential = await register(email, password);
-        const uid = userCredential.user.uid;
-
+        const userCredential = await register(email, password)
+        const uid = userCredential.user.uid
         const baseUsername = email.split('@')[0]
-        const username = await generateUniqueUsername(baseUsername);
-
-        await createUserProfile(uid, username);
+        const username = await generateUniqueUsername(baseUsername)
+        await createUserProfile(uid, username)
+        toast.success('Conta criada com sucesso! 🎉')
       }
     } catch (err: any) {
-      setError(err.message || 'Ocorreu um erro. Tente novamente.')
+      const message = err.message || 'Ocorreu um erro. Tente novamente.'
+      setError(message)
+      toast.error(message)
     } finally {
       setIsLoading(false)
     }

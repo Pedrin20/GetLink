@@ -9,6 +9,7 @@ import { Redirect } from '../pages/Redirect'
 import { Dashboard } from '../pages/Dashboard'
 import { Links } from '../pages/Links'
 import { Analytics } from '../pages/Analytics';
+import { Settings } from '../pages/Settings';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -47,6 +48,11 @@ export function AppRoutes() {
       <Route path="/dashboard/analytics" element={
         <PrivateRoute>
           <Analytics />
+        </PrivateRoute>
+      } />
+      <Route path="/dashboard/settings" element={
+        <PrivateRoute>
+          <Settings />
         </PrivateRoute>
       } />
       <Route path="/r/:linkId" element={<Redirect />} />

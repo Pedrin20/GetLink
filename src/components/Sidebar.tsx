@@ -6,10 +6,9 @@ import {
   Palette, 
   Settings, 
   LogOut,
-  User,
-  Share2
 } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
+import toast from 'react-hot-toast'
 
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -25,6 +24,7 @@ export function Sidebar() {
 
   const handleLogout = async () => {
     await logout()
+    toast.success('Logout realizado com sucesso! 👋')
     navigate('/login')
   }
 

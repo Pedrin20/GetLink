@@ -13,9 +13,11 @@ function App() {
             background: '#fff',
             color: '#1C1B1A',
             borderRadius: '12px',
-            padding: '16px',
+            padding: '12px 16px',
             boxShadow: '0 10px 40px rgba(0,0,0,0.12)',
             border: '1px solid #E6E4E0',
+            fontSize: '14px',
+            maxWidth: '90vw',
           },
           success: {
             style: {

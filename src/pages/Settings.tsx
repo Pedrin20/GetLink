@@ -95,7 +95,7 @@ export function Settings() {
     <MainLayout>
       <div className="max-w-2xl mx-auto space-y-8">
         <div>
-          <h1 className="text-3xl font-serif text-[var(--color-ink)]">Configuracoes</h1>
+          <h1 className="text-3xl font-serif text-[var(--color-ink)]">Configurações</h1>
           <p className="text-[var(--color-muted)] text-sm mt-1">
             Gerencie sua senha e conta.
           </p>

@@ -95,42 +95,40 @@ export function Settings() {
     <MainLayout>
       <div className="max-w-2xl mx-auto space-y-8">
         <div>
-          <h1 className="text-3xl font-serif text-[var(--color-ink)]">Configurações</h1>
-          <p className="text-[var(--color-muted)] text-sm mt-1">
+          <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">Configurações</h1>
+          <p className="text-[var(--color-text-secondary)] text-sm mt-1">
             Gerencie sua senha e conta.
           </p>
         </div>
 
         {/* Alterar Senha */}
-        <div className="bg-white rounded-2xl border border-[var(--color-border)] p-6 shadow-sm">
+        <div className="card p-6">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-[var(--color-accent-light)] flex items-center justify-center">
-              <Shield size={20} className="text-[var(--color-accent)]" />
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-primary-soft)] flex items-center justify-center">
+              <Shield size={20} className="text-[var(--color-primary)]" />
             </div>
             <div>
-              <h2 className="text-lg font-medium text-[var(--color-ink)]">Alterar senha</h2>
-              <p className="text-xs text-[var(--color-muted)]">Atualize sua senha de acesso</p>
+              <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">Alterar senha</h2>
+              <p className="text-xs text-[var(--color-text-secondary)]">Atualize sua senha de acesso</p>
             </div>
           </div>
 
           <form onSubmit={handleChangePassword} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--color-ink)] mb-1">
-                Senha atual
-              </label>
+              <label className="label">Senha atual</label>
               <div className="relative">
                 <input
                   type={showCurrentPassword ? 'text' : 'password'}
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="w-full border border-[var(--color-border)] rounded-xl px-4 py-2.5 pr-10 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] transition"
+                  className="input pr-11"
                   placeholder="Digite sua senha atual"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)] hover:text-[var(--color-ink)] transition"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 btn btn-ghost p-1"
                 >
                   {showCurrentPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -138,15 +136,13 @@ export function Settings() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--color-ink)] mb-1">
-                Nova senha
-              </label>
+              <label className="label">Nova senha</label>
               <div className="relative">
                 <input
                   type={showNewPassword ? 'text' : 'password'}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full border border-[var(--color-border)] rounded-xl px-4 py-2.5 pr-10 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] transition"
+                  className="input pr-11"
                   placeholder="Digite a nova senha"
                   required
                   minLength={6}
@@ -154,23 +150,21 @@ export function Settings() {
                 <button
                   type="button"
                   onClick={() => setShowNewPassword(!showNewPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)] hover:text-[var(--color-ink)] transition"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 btn btn-ghost p-1"
                 >
                   {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
-              <p className="text-xs text-[var(--color-muted)] mt-1">Minimo de 6 caracteres</p>
+              <p className="text-xs text-[var(--color-text-muted)] mt-1">Minimo de 6 caracteres</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--color-ink)] mb-1">
-                Confirmar nova senha
-              </label>
+              <label className="label">Confirmar nova senha</label>
               <input
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full border border-[var(--color-border)] rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] transition"
+                className="input"
                 placeholder="Confirme a nova senha"
                 required
                 minLength={6}
@@ -180,11 +174,11 @@ export function Settings() {
             <button
               type="submit"
               disabled={isChangingPassword}
-              className="w-full py-3 bg-[var(--color-accent)] text-white font-semibold rounded-xl hover:brightness-110 transition flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="btn btn-primary btn-lg w-full"
             >
               {isChangingPassword ? (
                 <>
-                  <span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                  <span className="spinner spinner-white" />
                   Alterando...
                 </>
               ) : (
@@ -195,46 +189,48 @@ export function Settings() {
         </div>
 
         {/* Zona de Perigo */}
-        <div className="bg-white rounded-2xl border border-red-200 p-6 shadow-sm">
+        <div className="card p-6 border-[var(--color-error)]/30">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
-              <AlertTriangle size={20} className="text-red-500" />
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-error-soft)] flex items-center justify-center">
+              <AlertTriangle size={20} className="text-[var(--color-error)]" />
             </div>
-          
             <div>
-              <h2 className="text-lg font-medium text-red-600">Zona de perigo</h2>
-              <p className="text-xs text-[var(--color-muted)]">Ações irreversíveis para sua conta</p>
+              <h2 className="text-lg font-semibold text-[var(--color-error)]">Zona de perigo</h2>
+              <p className="text-xs text-[var(--color-text-secondary)]">Ações irreversíveis para sua conta</p>
             </div>
           </div>
 
           {!showDeleteConfirm ? (
-            <button onClick={() => setShowDeleteConfirm(true)} className="px-4 py-2.5 border border-red-300 text-red-600 font-medium rounded-xl hover:bg-red-50 transition flex items-center gap-2">
+            <button onClick={() => setShowDeleteConfirm(true)} className="btn btn-outline border-[var(--color-error)] text-[var(--color-error)] hover:bg-[var(--color-error-soft)]">
               <Trash2 size={16} />
               Deletar minha conta
             </button>
           ) : (
             <form onSubmit={handleDeleteAccount} className="space-y-4">
-              <div className="p-4 bg-red-50 rounded-xl border border-red-200">
-                <p className="text-sm text-red-700 font-medium mb-1">⚠️ Esta ação é irreversível!</p>
-                <p className="text-xs text-red-600">Todos os seus dados, links e perfil serão permanentemente deletados.</p>
+              <div className="alert alert-error">
+                <AlertTriangle size={18} />
+                <div>
+                  <p className="font-medium">⚠️ Esta ação é irreversível!</p>
+                  <p className="text-xs opacity-80">Todos os seus dados, links e perfil serão permanentemente deletados.</p>
+                </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--color-ink)] mb-1">Confirme com sua senha</label>
+                <label className="label">Confirme com sua senha</label>
                 <div className="relative">
-                  <input type={showDeletePassword ? 'text' : 'password'} value={deletePassword} onChange={(e) => setDeletePassword(e.target.value)} className="w-full border border-red-200 rounded-xl px-4 py-2.5 pr-10 focus:outline-none focus:ring-2 focus:ring-red-400 transition" placeholder="••••••••" required />
-                  <button type="button" onClick={() => setShowDeletePassword(!showDeletePassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)] hover:text-[var(--color-ink)] transition">
+                  <input type={showDeletePassword ? 'text' : 'password'} value={deletePassword} onChange={(e) => setDeletePassword(e.target.value)} className="input input-error pr-11" placeholder="••••••••" required />
+                  <button type="button" onClick={() => setShowDeletePassword(!showDeletePassword)} className="absolute right-3 top-1/2 -translate-y-1/2 btn btn-ghost p-1">
                     {showDeletePassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
               </div>
 
               <div className="flex gap-3">
-                <button type="button" onClick={() => { setShowDeleteConfirm(false); setDeletePassword('') }} className="flex-1 py-2.5 border border-[var(--color-border)] text-[var(--color-ink)] font-medium rounded-xl hover:bg-[var(--color-paper)] transition">
+                <button type="button" onClick={() => { setShowDeleteConfirm(false); setDeletePassword('') }} className="btn btn-secondary btn-md flex-1">
                   Cancelar
                 </button>
-                <button type="submit" disabled={isDeleting} className="flex-1 py-2.5 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 transition flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">
-                  {isDeleting ? (<><span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" /> Deletando...</>) : (<><Trash2 size={16} /> Deletar conta</>)}
+                <button type="submit" disabled={isDeleting} className="btn btn-destructive btn-md flex-1">
+                  {isDeleting ? (<><span className="spinner spinner-white" /> Deletando...</>) : (<><Trash2 size={16} /> Deletar conta</>)}
                 </button>
               </div>
             </form>

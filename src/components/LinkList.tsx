@@ -17,7 +17,7 @@ import {
   useSortable,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical } from 'lucide-react'
+import { GripVertical, Link2 } from 'lucide-react'
 
 function SortableItem({ link, onRemove, onEdit }: { link: Link; onRemove: (id: string) => void; onEdit?: (link: Link) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: link.id })
@@ -33,7 +33,7 @@ function SortableItem({ link, onRemove, onEdit }: { link: Link; onRemove: (id: s
       <button
         {...attributes}
         {...listeners}
-        className="cursor-grab active:cursor-grabbing p-1 text-[var(--color-muted)] hover:text-[var(--color-ink)] transition"
+        className="cursor-grab active:cursor-grabbing p-1 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors rounded-lg hover:bg-[var(--color-surface-hover)]"
         aria-label="Arrastar para reordenar"
       >
         <GripVertical size={20} />
@@ -72,8 +72,12 @@ export function LinkList({ links, onRemove, onEdit, onReorder }: Props) {
 
   if (links.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-[var(--color-border)] bg-[var(--color-accent-light)] px-4 py-10 text-center text-sm text-[var(--color-muted)] sm:px-6">
-        Nenhum link cadastrado ainda.
+      <div className="empty-state">
+        <div className="empty-state-icon">
+          <Link2 size={24} className="text-[var(--color-primary)]" />
+        </div>
+        <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-1">Nenhum link cadastrado</h3>
+        <p className="text-sm text-[var(--color-text-secondary)]">Crie seu primeiro link para começar a gerenciar.</p>
       </div>
     )
   }

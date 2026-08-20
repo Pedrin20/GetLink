@@ -10,23 +10,23 @@ function App() {
         toastOptions={{
           duration: 4000,
           style: {
-            background: '#fff',
-            color: '#1C1B1A',
-            borderRadius: '12px',
+            background: 'var(--color-surface)',
+            color: 'var(--color-text-primary)',
+            borderRadius: 'var(--radius-lg)',
             padding: '12px 16px',
-            boxShadow: '0 10px 40px rgba(0,0,0,0.12)',
-            border: '1px solid #E6E4E0',
-            fontSize: '14px',
+            boxShadow: 'var(--shadow-lg)',
+            border: '1px solid var(--color-border)',
+            fontSize: 'var(--text-sm)',
             maxWidth: '90vw',
           },
           success: {
             style: {
-              borderLeft: '4px solid #22c55e',
+              borderLeft: '4px solid var(--color-success)',
             },
           },
           error: {
             style: {
-              borderLeft: '4px solid #ef4444',
+              borderLeft: '4px solid var(--color-error)',
             },
           },
         }}

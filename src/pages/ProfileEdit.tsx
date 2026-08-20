@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { uploadAvatar } from '../services/uploadService';
 
 const COLOR_PALETTE = [
-  '#B85C38',
+  '#F97316',
   '#2D3748',
   '#1A365D',
   '#2F855A',
@@ -99,7 +99,7 @@ export function ProfileEdit() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[var(--color-accent)] border-t-transparent" />
+        <div className="spinner" style={{ width: '3rem', height: '3rem', borderWidth: '4px' }} />
       </div>
     );
   }
@@ -107,23 +107,23 @@ export function ProfileEdit() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      <button onClick={() => navigate(-1)}>Voltar</button>
+      <button onClick={() => navigate(-1)} className="btn btn-ghost btn-sm mb-4">← Voltar</button>
       <div className="flex items-center gap-3 mb-8">
-        <h1 className="text-3xl font-serif text-[var(--color-ink)]">Editar Perfil</h1>
-        <span className="text-sm bg-[var(--color-accent-light)] text-[var(--color-accent)] px-3 py-1 rounded-full">
+        <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">Editar Perfil</h1>
+        <span className="badge badge-primary">
           Personalize sua página
         </span>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
         <div className="lg:col-span-3 space-y-6">
-          <form onSubmit={handleSave} className="bg-white rounded-2xl border border-[var(--color-border)] p-6 shadow-sm space-y-6">
+          <form onSubmit={handleSave} className="card p-6 space-y-6">
             {/* Avatar upload */}
             <div>
-              <label className="block text-sm font-medium text-[var(--color-ink)] mb-2">Foto de perfil</label>
+              <label className="label">Foto de perfil</label>
               <div className="flex items-center gap-6">
                 <div className="relative">
-                  <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-[var(--color-border)] bg-[var(--color-paper)]">
+                  <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-[var(--color-border)] bg-[var(--color-background)]">
                     {avatarPreview ? (
                       <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
                     ) : (
@@ -135,7 +135,7 @@ export function ProfileEdit() {
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="absolute bottom-0 right-0 bg-[var(--color-accent)] text-white p-1.5 rounded-full shadow-md hover:brightness-110 transition"
+                    className="absolute bottom-0 right-0 bg-[var(--color-primary)] text-white p-1.5 rounded-full shadow-[var(--shadow-primary)] hover:bg-[var(--color-primary-hover)] transition-colors"
                   >
                     <Camera size={16} />
                   </button>
@@ -156,15 +156,15 @@ export function ProfileEdit() {
                     className="hidden"
                   />
                 </div>
-                <div className="text-sm text-[var(--color-muted)]">
+                <div className="text-sm text-[var(--color-text-secondary)]">
                   <p>Clique no ícone da câmera para fazer upload</p>
-                  <p className="text-xs">Formato: JPG, PNG (máx. 5MB)</p>
+                  <p className="text-xs text-[var(--color-text-muted)]">Formato: JPG, PNG (máx. 5MB)</p>
                 </div>
               </div>
             </div>
 
             <div>
-              <label htmlFor="displayName" className="block text-sm font-medium text-[var(--color-ink)] mb-1">
+              <label htmlFor="displayName" className="label">
                 Nome de exibição
               </label>
               <input
@@ -173,29 +173,29 @@ export function ProfileEdit() {
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 placeholder="Seu nome"
-                className="w-full border border-[var(--color-border)] rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent transition"
+                className="input"
               />
             </div>
 
             {/* Bio */}
             <div>
-              <label htmlFor="bio" className="block text-sm font-medium text-[var(--color-ink)] mb-1">
+              <label htmlFor="bio" className="label">
                 Biografia
               </label>
               <textarea
                 id="bio"
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
-                className="w-full border border-[var(--color-border)] rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent transition min-h-[100px] resize-y"
+                className="input min-h-[100px] resize-y"
                 rows={3}
                 placeholder="Conte um pouco sobre você..."
               />
-              <p className="text-xs text-[var(--color-muted)] text-right mt-1">{bio.length}/160</p>
+              <p className="text-xs text-[var(--color-text-muted)] text-right mt-1">{bio.length}/160</p>
             </div>
 
             {/* Cor de fundo com paleta */}
             <div>
-              <label className="block text-sm font-medium text-[var(--color-ink)] mb-2">
+              <label className="label">
                 Cor de fundo do perfil
               </label>
               <div className="flex flex-wrap gap-3 items-center">
@@ -205,13 +205,13 @@ export function ProfileEdit() {
                     type="button"
                     onClick={() => setThemeColor(color)}
                     className={`w-10 h-10 rounded-full transition-all duration-200 ${
-                      themeColor === color ? 'ring-2 ring-offset-2 ring-[var(--color-accent)] scale-110' : 'hover:scale-105'
+                      themeColor === color ? 'ring-2 ring-offset-2 ring-[var(--color-primary)] scale-110' : 'hover:scale-105'
                     }`}
                     style={{ backgroundColor: color }}
                   />
                 ))}
                 <div className="flex items-center gap-2 ml-2">
-                  <Palette size={18} className="text-[var(--color-muted)]" />
+                  <Palette size={18} className="text-[var(--color-text-muted)]" />
                   <input
                     type="color"
                     value={themeColor}
@@ -225,11 +225,11 @@ export function ProfileEdit() {
              <button
               type="submit"
               disabled={saving}
-              className="w-full py-3 bg-[var(--color-accent)] text-white font-semibold rounded-xl hover:brightness-110 transition flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="btn btn-primary btn-lg w-full"
             >
               {saving ? (
                 <>
-                  <span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                  <span className="spinner spinner-white" />
                   Salvando...
                 </>
               ) : (
@@ -241,13 +241,7 @@ export function ProfileEdit() {
             </button>
 
             {message && (
-              <div
-                className={`p-3 rounded-xl text-sm ${
-                  message.type === 'success'
-                    ? 'bg-green-50 text-green-700 border border-green-200'
-                    : 'bg-red-50 text-red-700 border border-red-200'
-                }`}
-              >
+              <div className={`alert ${message.type === 'success' ? 'alert-success' : 'alert-error'}`}>
                 {message.text}
               </div>
             )}
@@ -258,12 +252,12 @@ export function ProfileEdit() {
         {/* Coluna de preview (2/5 da largura) */}
         <div className="lg:col-span-2">
           <div className="sticky top-8">
-            <h4 className="text-sm font-medium text-[var(--color-muted)] mb-3 flex items-center gap-2">
+            <h4 className="text-sm font-medium text-[var(--color-text-secondary)] mb-3 flex items-center gap-2">
              Prévia ao vivo
             </h4>
             <div
-              className="rounded-2xl border border-[var(--color-border)] p-6 transition-colors duration-300 min-h-[400px] shadow-sm"
-              style={{ backgroundColor: themeColor || 'var(--color-paper)' }}
+              className="rounded-2xl border border-[var(--color-border)] p-6 transition-colors duration-300 min-h-[400px] shadow-[var(--shadow-md)]"
+              style={{ backgroundColor: themeColor || 'var(--color-background)' }}
             >
               <div className="text-center">
                 {avatarPreview ? (
@@ -294,21 +288,20 @@ export function ProfileEdit() {
                   </div>
                 </div>
               </div>
-            </div>
-            <p className="text-xs text-center text-[var(--color-muted)] mt-2">
+            </div>                <p className="text-xs text-center text-[var(--color-text-muted)] mt-2">
               Esta é uma prévia de como seu perfil público será exibido.
             </p>
           </div>
 
           {profile?.username && (
-  <div className="mt-6 p-4 bg-[var(--color-accent-light)] rounded-xl border border-[var(--color-accent)]/20">
-    <p className="text-sm text-[var(--color-ink)] font-medium mb-2">🔗 Seu link público</p>
+  <div className="mt-6 p-4 bg-[var(--color-primary-soft)] rounded-xl border border-[var(--color-primary)]/20">
+    <p className="text-sm text-[var(--color-text-primary)] font-medium mb-2">🔗 Seu link público</p>
     <div className="flex items-center gap-2">
       <input
         type="text"
         readOnly
         value={`${window.location.origin}/${profile.username}`}
-        className="flex-1 bg-white border border-[var(--color-border)] rounded-lg px-3 py-2 text-sm text-[var(--color-ink)] focus:outline-none"
+        className="flex-1 input text-sm"
       />
       <button
         onClick={() => {
@@ -316,7 +309,7 @@ export function ProfileEdit() {
           setMessage({ type: 'success', text: '✅ Link copiado para a área de transferência!' });
           setTimeout(() => setMessage(null), 3000);
         }}
-        className="px-4 py-2 bg-[var(--color-accent)] text-white text-sm font-medium rounded-lg hover:brightness-110 transition"
+        className="btn btn-primary btn-md"
       >
         Copiar
       </button>

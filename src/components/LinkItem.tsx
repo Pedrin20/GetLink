@@ -21,15 +21,15 @@ export function LinkItem({ link, onRemove, onEdit }: Props) {
   }
 
     return (
-    <div className="group bg-white rounded-xl border border-[var(--color-border)] p-4 hover:shadow-md hover:border-[var(--color-accent)]/30 transition-all duration-200">
+    <div className="card card-hover p-4">
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <h3 className="text-base font-medium text-[var(--color-ink)] truncate">
+            <h3 className="text-base font-medium text-[var(--color-text-primary)] truncate">
               {link.title || 'Sem título'}
             </h3>
             {!link.isActive && (
-              <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+              <span className="badge badge-info">
                 Inativo
               </span>
             )}
@@ -38,27 +38,27 @@ export function LinkItem({ link, onRemove, onEdit }: Props) {
             href={`/r/${link.id}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-[var(--color-muted)] hover:text-[var(--color-accent)] truncate block"
+            className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors truncate block"
             onClick={(e) => {
             }}
           >
             {link.url}
           </a>
           {link.description && (
-            <p className="text-sm text-[var(--color-muted)]/70 truncate mt-0.5">
+            <p className="text-sm text-[var(--color-text-muted)] truncate mt-0.5">
               {link.description}
             </p>
           )}
         </div>
 
         <div className="flex items-center gap-2 flex-shrink-0">
-          <div className="flex items-center gap-1 text-xs text-[var(--color-muted)] bg-[var(--color-paper)] px-2 py-1 rounded-full">
+          <div className="badge badge-primary">
             <BarChart2 size={14} />
             <span>{link.clicks || 0}</span>
           </div>
 
           {onEdit && (
-      <button onClick={() => onEdit(link)} className="p-1 text-[var(--color-muted)] hover:text-[var(--color-accent)] transition rounded hover:bg-[var(--color-accent-light)]">
+      <button onClick={() => onEdit(link)} className="btn btn-ghost btn-sm p-2">
         <Edit2 size={14} />
       </button>
     )}
@@ -67,12 +67,12 @@ export function LinkItem({ link, onRemove, onEdit }: Props) {
           navigator.clipboard.writeText(`${window.location.origin}/r/${link.id}`)
           toast.success('Link copiado para a área de transferência! 📋')
         }}
-        className="p-1 text-[var(--color-muted)] hover:text-[var(--color-accent)] transition rounded hover:bg-[var(--color-accent-light)]"
+        className="btn btn-ghost btn-sm p-2"
         title="Copiar link"
       >
         <Link2 size={14} />
       </button>
-    <button onClick={handleRemove} className="p-1 text-[var(--color-muted)] hover:text-red-500 transition rounded hover:bg-red-50">
+    <button onClick={handleRemove} className="btn btn-ghost btn-sm p-2 hover:text-[var(--color-error)] hover:bg-[var(--color-error-soft)]">
       <Trash2 size={14} />
     </button>
         </div>

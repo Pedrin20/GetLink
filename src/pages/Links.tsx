@@ -29,7 +29,7 @@ export function Links() {
     }))
     try {
       await reorderLinks(updates)
-      toast.success('Ordem dos links atualizada! 🔀')
+      toast.success('Ordem dos links atualizada!')
     } catch (err) {
       toast.error('Erro ao reordenar links. Tente novamente.')
     }

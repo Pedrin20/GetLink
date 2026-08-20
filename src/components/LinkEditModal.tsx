@@ -20,74 +20,77 @@ export function LinkEditModal({ link, onSave, onClose }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl relative">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+      <div className="bg-white rounded-[var(--radius-2xl)] p-6 max-w-md w-full shadow-[var(--shadow-xl)] relative animate-slide-up">
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 text-[var(--color-muted)] hover:text-[var(--color-ink)] transition"
+          className="btn btn-ghost btn-sm absolute top-4 right-4 p-2"
         >
-          <X size={24} />
+          <X size={20} />
         </button>
 
-        <h3 className="text-xl font-serif text-[var(--color-ink)] mb-4">Editar Link</h3>
+        <h3 className="text-xl font-bold text-[var(--color-text-primary)] mb-6">Editar Link</h3>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-[var(--color-ink)] mb-1">
-              Título
-            </label>
+            <label className="label">Título</label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full border border-[var(--color-border)] rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+              className="input"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[var(--color-ink)] mb-1">
-              URL
-            </label>
+            <label className="label">URL</label>
             <input
               type="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              className="w-full border border-[var(--color-border)] rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+              className="input"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[var(--color-ink)] mb-1">
-              Descrição (opcional)
-            </label>
+            <label className="label">Descrição (opcional)</label>
             <input
               type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full border border-[var(--color-border)] rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+              className="input"
             />
           </div>
 
           <div className="flex items-center gap-3">
-            <label className="flex items-center gap-2 text-sm font-medium text-[var(--color-ink)]">
+            <label className="flex items-center gap-2 text-sm font-medium text-[var(--color-text-primary)] cursor-pointer">
               <input
                 type="checkbox"
                 checked={isActive}
                 onChange={(e) => setIsActive(e.target.checked)}
-                className="w-4 h-4 accent-[var(--color-accent)]"
+                className="w-4 h-4 accent-[var(--color-primary)]"
               />
               Link ativo
             </label>
           </div>
 
-          <button
-            type="submit"
-            className="w-full py-2.5 bg-[var(--color-accent)] text-white font-medium rounded-xl hover:brightness-110 transition"
-          >
-            Salvar alterações
-          </button>
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="btn btn-secondary btn-md flex-1"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className="btn btn-primary btn-md flex-1"
+            >
+              Salvar alterações
+            </button>
+          </div>
         </form>
       </div>
     </div>

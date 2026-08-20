@@ -18,7 +18,7 @@ export function MainLayout({ children, noSideBar = false }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-paper)]">
+    <div className="min-h-screen bg-[var(--color-background)]">
       <Sidebar />
       <div className="ml-64 min-h-screen">
         <main className="p-6 sm:p-8 max-w-7xl mx-auto">

@@ -45,8 +45,6 @@ export function Analytics() {
   const totalClicks = links.reduce((sum, l) => sum + (l.clicks || 0), 0)
   const avgClicks = totalLinks > 0 ? (totalClicks / totalLinks).toFixed(1) : 0
   const mostClickedLink = links.reduce((max, l) => (l.clicks || 0) > (max.clicks || 0) ? l : max, links[0] || {})
-  const hasClicks = totalClicks > 0
-
   if (loading) {
     return (
       <MainLayout>
@@ -147,7 +145,7 @@ export function Analytics() {
                     labelFormatter={(label) => `Link: ${label}`}
                   />
                   <Bar dataKey="clicks" fill="#B85C38" radius={[0, 4, 4, 0]}>
-                    {topLinks.map((entry, index) => (
+                    {topLinks.map((_entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Bar>
@@ -175,7 +173,7 @@ export function Analytics() {
                     fill="#8884d8"
                     paddingAngle={2}
                     dataKey="value"
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    label={(props: any) => `${props.name || ''}: ${((props.percent || 0) * 100).toFixed(0)}%`}
                   >
                     <Cell fill="#B85C38" />
                     <Cell fill="#E6E4E0" />

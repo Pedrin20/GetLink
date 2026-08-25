@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import toast from 'react-hot-toast'
+import { ThemeSwitcher } from './ThemeSwitcher'
 
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -54,8 +55,9 @@ export function Sidebar() {
         ))}
       </nav>
 
-      {/* Perfil e logout */}
+      {/* Tema + Perfil + logout */}
       <div className="border-t border-[var(--color-border)] p-4 space-y-3">
+        <ThemeSwitcher />
         <div className="flex items-center gap-3 px-2">
           <div className="avatar avatar-sm">
             {user?.displayName?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || '?'}

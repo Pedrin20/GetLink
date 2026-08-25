@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { Link, LinkInput } from '../types'
+import type { Link } from '../types'
 import { createLink, deleteLink, subscribeToUserLinks, updateLink as updateLinkService } from '../services/linkService'
 
 export function useLinks(userId?: string) {
@@ -22,7 +22,7 @@ export function useLinks(userId?: string) {
     return () => unsub()
   }, [userId])
 
-  async function addLink(link: Omit<Link, 'id' | 'createdAt'> & { userId: string }) {
+  async function addLink(link: { title: string; url: string; description: string; userId: string }) {
     await createLink(link)
   }
 

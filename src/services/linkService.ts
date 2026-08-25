@@ -18,7 +18,7 @@ import type { Link, LinkWithId } from '../types'
 
 const linksCol = collection(db, 'links')
 
-export async function createLink(link: Omit<Link, 'createdAt'> & { userId: string }) {
+export async function createLink(link: { title: string; url: string; description?: string; userId: string }) {
   const docRef = await addDoc(linksCol, {
     ...link,
     userId: link.userId,
@@ -30,7 +30,7 @@ export async function createLink(link: Omit<Link, 'createdAt'> & { userId: strin
   return docRef.id
 }
 
-export async function updateLink(id: string, data: Partial<Omit<Link, 'id' | 'userId' | 'createdAt'>>) {
+export async function updateLink(id: string, data: Partial<Pick<Link, 'title' | 'url' | 'description' | 'isActive' | 'order'>>) {
   const ref = doc(db, 'links', id)
   await updateDoc(ref, data)
 }

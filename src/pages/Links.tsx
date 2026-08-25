@@ -35,7 +35,7 @@ export function Links() {
     }
   }
 
-  const handleAddLink = async (newLink: Omit<Link, 'id'>) => {
+  const handleAddLink = async (newLink: { title: string; url: string; description: string }) => {
     try {
       await addLink({ ...newLink, userId: user!.uid })
       toast.success('Link criado com sucesso! 🎉')

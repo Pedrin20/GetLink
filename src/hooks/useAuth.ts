@@ -16,16 +16,6 @@ export function useAuth() {
 
     async function login(email: string, password: string) {
         return signInWithEmailAndPassword(auth, email, password)
-        console.log("Iniciando tentativa de login: ", email)
-        try {
-        const userCredential = await signInWithEmailAndPassword( auth, email, password )
-        console.log("Login bem sucedido! Usuario: ", userCredential);
-
-        return userCredential
-        } catch(error) {
-            console.error("Error capturado no login, codigo: ", error.code, "mensagem:", error.message);
-            throw error;
-        }
     }
 
     async function register(email: string, password: string) {

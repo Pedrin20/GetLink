@@ -1,7 +1,7 @@
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
-export async function uploadAvatar(file: File): Promise<string> {
+export async function uploadImage(file: File): Promise<string> {
   const formData = new FormData();
   formData.append('file', file);
   formData.append('upload_preset', UPLOAD_PRESET);
@@ -21,3 +21,6 @@ export async function uploadAvatar(file: File): Promise<string> {
   const data = await response.json();
   return data.secure_url;
 }
+
+// Backward compat
+export const uploadAvatar = uploadImage;

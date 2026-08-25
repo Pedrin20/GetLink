@@ -3,21 +3,17 @@ import { useAuth } from '../hooks/useAuth'
 import { useLinks } from '../hooks/useLinks'
 import { useUserProfile } from '../hooks/useUserProfile'
 import { LinkForm } from '../components/LinkForm'
-import { LinkList } from '../components/LinkList'
 import { QRCodeModal } from '../components/QRCodeModal'
 import { MainLayout } from '../layouts/MainLayout'
 import { 
   Link2, 
-  Users, 
   Eye, 
   TrendingUp,
   Plus,
   Share2,
   BarChart3,
-  ArrowRight,
-  Clock
+  ArrowRight
 } from 'lucide-react'
-import type { Link } from '../types'
 import { useNavigate } from 'react-router-dom'
 
 function StatCard({ icon: Icon, label, value, trend }: { icon: any; label: string; value: number | string; trend?: string }) {
@@ -41,7 +37,7 @@ function StatCard({ icon: Icon, label, value, trend }: { icon: any; label: strin
 
 export function Dashboard() {
     const { user } = useAuth()
-    const { links, loading, addLink, removeLink, updateLink } = useLinks(user?.uid)
+    const { links, loading, addLink } = useLinks(user?.uid)
     const { profile: currentProfile, loading: profileLoading } = useUserProfile(user?.uid)
     const [showAddForm, setShowAddForm] = useState(false)
     const [isQRModalOpen, setIsQRModalOpen] = useState(false)
@@ -149,7 +145,7 @@ return (
         {showAddForm && (
           <div className="bg-white p-6 rounded-xl border border-[var(--color-border)] shadow-sm">
             <LinkForm
-              onAdd={(newLink: Omit<Link, 'id'>) => {
+              onAdd={(newLink: { title: string; url: string; description: string }) => {
                 addLink({ ...newLink, userId: user!.uid })
                 setShowAddForm(false)
               }}

@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useLinks } from '../hooks/useLinks'
 import { useUserProfile } from '../hooks/useUserProfile'
-import { LinkForm } from '../components/LinkForm'
 import { LinkList } from '../components/LinkList'
 import { LinkEditModal } from '../components/LinkEditModal'
 import { QRCodeModal } from '../components/QRCodeModal'
@@ -12,7 +11,7 @@ import { reorderLinks } from '../services/linkService'
 
 export function Home() {
   const { user } = useAuth()
-  const { links, loading, addLink, removeLink, updateLink } = useLinks(user?.uid)
+  const { links, loading, removeLink, updateLink } = useLinks(user?.uid)
   const { profile: currentProfile, loading: profileLoading } = useUserProfile(user?.uid)
   const [showAddForm, setShowAddForm] = useState(false)
   const [isQRModalOpen, setIsQRModalOpen] = useState(false)

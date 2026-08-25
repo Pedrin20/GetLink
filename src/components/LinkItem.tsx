@@ -1,22 +1,17 @@
 import type { Link } from "../types"
-import { useState } from 'react'
 import { Edit2, Trash2, BarChart2, Link2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 type Props = {
-    item: Link
+    link: Link
     onRemove: (id: string) => void
     onEdit?: (link: Link) => void
 }
 
 export function LinkItem({ link, onRemove, onEdit }: Props) {
-  const [isDeleting, setIsDeleting] = useState(false)
-
   const handleRemove = async () => {
     if (window.confirm('Remover este link?')) {
-      setIsDeleting(true)
       await onRemove(link.id)
-      setIsDeleting(false)
     }
   }
 
@@ -39,8 +34,7 @@ export function LinkItem({ link, onRemove, onEdit }: Props) {
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors truncate block"
-            onClick={(e) => {
-            }}
+            onClick={() => {}}
           >
             {link.url}
           </a>

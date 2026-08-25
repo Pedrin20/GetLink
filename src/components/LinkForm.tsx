@@ -1,8 +1,6 @@
 import { useState } from 'react'
-import type { Link } from '../types'
-
 type Props = {
-    onAdd: (link: Omit<Link, 'id'>) => void
+    onAdd: (link: { title: string; url: string; description: string }) => void
 }
 
 export function LinkForm({ onAdd }: Props) {

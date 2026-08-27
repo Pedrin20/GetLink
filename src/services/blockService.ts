@@ -11,9 +11,11 @@ import {
   updateDoc,
   writeBatch,
   getDocs,
+  getDoc,
 } from 'firebase/firestore'
 import { db } from '../firebase'
-import type { Block, BlockType, BlockDataMap } from '../types'
+import type { Block, BlockType, BlockDataMap, PageSettings } from '../types'
+import { DEFAULT_PAGE_SETTINGS } from '../types'
 
 const blocksCol = collection(db, 'blocks')
 
@@ -99,6 +101,22 @@ export async function fetchUserBlocks(userId: string): Promise<Block[]> {
   })
 }
 
+// Fetch page settings for public profile
+export async function fetchPageSettings(userId: string): Promise<PageSettings> {
+  try {
+    const settingsRef = doc(db, 'pageSettings', userId)
+    const snap = await getDoc(settingsRef)
+    if (snap.exists()) {
+      return { ...DEFAULT_PAGE_SETTINGS, ...snap.data() } as PageSettings
+    }
+  } catch {
+    // fall through
+  }
+  return DEFAULT_PAGE_SETTINGS
+}
+
+// ─── Migration from old link/old block types ───
+
 const MIGRATION_KEY = 'getlink-links-migrated'
 
 export function hasMigratedLinks(userId: string): boolean {
@@ -109,15 +127,64 @@ export function hasMigratedLinks(userId: string): boolean {
   }
 }
 
+// Map old block types to new ones
+function migrateBlockType(oldType: string): BlockType {
+  const map: Record<string, BlockType> = {
+    profile: 'header',
+    'link-featured': 'product',
+    project: 'service',
+    image: 'gallery',
+  }
+  return map[oldType] || (oldType as BlockType)
+}
+
+function migrateBlockData(type: string, data: any): any {
+  switch (type) {
+    case 'profile':
+      return { displayName: data.displayName || '', bio: data.bio || '', avatarUrl: data.avatarUrl || '' }
+    case 'link':
+      return { title: data.title || '', url: data.url || '', description: data.description || '' }
+    case 'link-featured':
+      return { title: data.title || '', description: data.description || '', imageUrl: data.imageUrl || '', price: '', linkUrl: data.url || '' }
+    case 'socials':
+      return { items: data.items || [] }
+    case 'project':
+      return { title: data.title || '', description: data.description || '', actionLabel: 'Ver projeto', actionUrl: data.linkUrl || '' }
+    case 'image':
+      return { images: data.imageUrl ? [{ url: data.imageUrl, caption: data.caption || '' }] : [] }
+    default:
+      return data
+  }
+}
+
 export async function migrateLinksToBlocks(userId: string): Promise<number> {
   if (hasMigratedLinks(userId)) return 0
 
   const existingBlocks = await fetchUserBlocks(userId)
   if (existingBlocks.length > 0) {
+    // Check if old types need migration
+    const hasOldTypes = existingBlocks.some(b =>
+      ['profile', 'link-featured', 'project', 'image'].includes(b.type)
+    )
+    if (hasOldTypes) {
+      const batch = writeBatch(db)
+      existingBlocks.forEach(block => {
+        if (['profile', 'link-featured', 'project', 'image'].includes(block.type)) {
+          const newType = migrateBlockType(block.type)
+          const ref = doc(db, 'blocks', block.id)
+          batch.update(ref, {
+            type: newType,
+            data: migrateBlockData(block.type, block.data),
+          })
+        }
+      })
+      await batch.commit()
+    }
     markMigrated(userId)
     return 0
   }
 
+  // Migrate from old links collection
   const linksQuery = query(
     collection(db, 'links'),
     where('userId', '==', userId),

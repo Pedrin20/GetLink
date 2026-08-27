@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Plus, GripVertical, Link2, Star, Share2, FolderOpen, Image as ImageIcon } from 'lucide-react'
+import { Plus, GripVertical, User, Link2, ShoppingBag, Calendar, Images, Video, Type, Mail, Share2 } from 'lucide-react'
 import {
   DndContext,
   DragOverlay,
@@ -31,13 +31,16 @@ type BlockEditorProps = {
   onBlocksChange?: (blocks: Block[]) => void
 }
 
-const TYPE_ICONS: Record<BlockType, typeof Link2> = {
-  profile: Share2,
+const TYPE_ICONS: Record<BlockType, typeof User> = {
+  header: User,
   link: Link2,
-  'link-featured': Star,
+  product: ShoppingBag,
+  service: Calendar,
+  gallery: Images,
+  video: Video,
+  text: Type,
+  newsletter: Mail,
   socials: Share2,
-  project: FolderOpen,
-  image: ImageIcon,
 }
 
 function vibrate(pattern: number | number[]) {
@@ -50,7 +53,6 @@ export function BlockEditor({ userId, onBlocksChange }: BlockEditorProps) {
   const [editingBlock, setEditingBlock] = useState<Block | null>(null)
   const [activeId, setActiveId] = useState<string | null>(null)
 
-  // Auto-migrate old links to blocks on first access
   useEffect(() => {
     if (!userId || hasMigratedLinks(userId) || blocks.length > 0) return
     migrateLinksToBlocks(userId).then((count) => {
@@ -66,8 +68,8 @@ export function BlockEditor({ userId, onBlocksChange }: BlockEditorProps) {
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   )
 
-  const profileBlock = blocks.find((b) => b.type === 'profile')
-  const nonProfileBlocks = blocks.filter((b) => b.type !== 'profile')
+  const headerBlock = blocks.find((b) => b.type === 'header')
+  const nonHeaderBlocks = blocks.filter((b) => b.type !== 'header')
 
   const activeBlock = activeId
     ? blocks.find((b) => b.id === activeId) ?? null
@@ -75,7 +77,7 @@ export function BlockEditor({ userId, onBlocksChange }: BlockEditorProps) {
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(String(event.active.id))
-    vibrate(30) // Light haptic on grab
+    vibrate(30)
   }
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -83,18 +85,18 @@ export function BlockEditor({ userId, onBlocksChange }: BlockEditorProps) {
     setActiveId(null)
 
     if (!over || active.id === over.id) {
-      vibrate([10, 20, 10]) // Cancel pattern
+      vibrate([10, 20, 10])
       return
     }
 
-    vibrate(50) // Success pattern on drop
+    vibrate(50)
 
-    const oldIndex = nonProfileBlocks.findIndex((b) => b.id === active.id)
-    const newIndex = nonProfileBlocks.findIndex((b) => b.id === over.id)
-    const newBlocks = arrayMove(nonProfileBlocks, oldIndex, newIndex)
+    const oldIndex = nonHeaderBlocks.findIndex((b) => b.id === active.id)
+    const newIndex = nonHeaderBlocks.findIndex((b) => b.id === over.id)
+    const newBlocks = arrayMove(nonHeaderBlocks, oldIndex, newIndex)
 
-    const reordered = profileBlock
-      ? [profileBlock, ...newBlocks]
+    const reordered = headerBlock
+      ? [headerBlock, ...newBlocks]
       : newBlocks
 
     reorder(reordered)
@@ -103,12 +105,15 @@ export function BlockEditor({ userId, onBlocksChange }: BlockEditorProps) {
 
   const handleAddBlock = async (type: BlockType) => {
     const defaults: Record<BlockType, any> = {
-      profile: { displayName: '', bio: '', avatarUrl: '', themeColor: '#F97316' },
+      header: { displayName: '', bio: '', avatarUrl: '' },
       link: { title: '', url: '', description: '' },
-      'link-featured': { title: '', url: '', description: '', imageUrl: '' },
-      socials: { items: [{ platform: 'github', url: '' }] },
-      project: { title: '', description: '', imageUrl: '', linkUrl: '' },
-      image: { imageUrl: '', caption: '' },
+      product: { title: '', description: '', imageUrl: '', price: '', linkUrl: '' },
+      service: { title: '', description: '', actionLabel: '', actionUrl: '' },
+      gallery: { images: [] },
+      video: { title: '', embedUrl: '' },
+      text: { content: '' },
+      newsletter: { title: '', description: '', placeholder: 'seu@email.com', buttonText: 'Assinar' },
+      socials: { items: [{ platform: 'instagram', url: '' }] },
     }
     try {
       await addBlock(type, defaults[type])
@@ -150,41 +155,38 @@ export function BlockEditor({ userId, onBlocksChange }: BlockEditorProps) {
 
   return (
     <div className="space-y-3">
-      {/* Profile block (always first, not draggable) */}
-      {profileBlock && (
+      {headerBlock && (
         <SortableBlock
-          block={profileBlock}
+          block={headerBlock}
           onEdit={setEditingBlock}
           onRemove={handleRemoveBlock}
-          isProfile
+          isHeader
           position={0}
           total={blocks.length}
         />
       )}
 
-      {/* Draggable blocks */}
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <SortableContext items={nonProfileBlocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
+        <SortableContext items={nonHeaderBlocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
           <div className="space-y-2">
-            {nonProfileBlocks.map((block, index) => (
+            {nonHeaderBlocks.map((block, index) => (
               <SortableBlock
                 key={block.id}
                 block={block}
                 onEdit={setEditingBlock}
                 onRemove={handleRemoveBlock}
-                position={profileBlock ? index + 1 : index}
+                position={headerBlock ? index + 1 : index}
                 total={blocks.length}
               />
             ))}
           </div>
         </SortableContext>
 
-        {/* Overlay: ghost preview while dragging */}
         <DragOverlay dropAnimation={null}>
           {activeBlock ? (
             <div className="flex items-center gap-2 p-3 rounded-xl border-2 border-[var(--color-primary)] bg-white shadow-xl opacity-90">
@@ -207,7 +209,6 @@ export function BlockEditor({ userId, onBlocksChange }: BlockEditorProps) {
         </DragOverlay>
       </DndContext>
 
-      {/* Empty state */}
       {blocks.length === 0 && (
         <div className="text-center py-8">
           <p className="text-sm text-[var(--color-text-muted)]">
@@ -216,7 +217,6 @@ export function BlockEditor({ userId, onBlocksChange }: BlockEditorProps) {
         </div>
       )}
 
-      {/* Edit form */}
       {editingBlock && (
         <BlockEditForm
           block={editingBlock}
@@ -225,7 +225,6 @@ export function BlockEditor({ userId, onBlocksChange }: BlockEditorProps) {
         />
       )}
 
-      {/* Add block */}
       {showAddPanel ? (
         <AddBlockPanel onSelect={handleAddBlock} onClose={() => setShowAddPanel(false)} />
       ) : (

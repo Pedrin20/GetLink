@@ -1,27 +1,30 @@
-import { GripVertical, Pencil, Trash2, Link2, Star, Share2, FolderOpen, Image } from 'lucide-react'
+import { GripVertical, Pencil, Trash2, User, Link2, ShoppingBag, Calendar, Images, Video, Type, Mail, Share2 } from 'lucide-react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import type { Block, BlockType } from '../types'
 
-const TYPE_LABELS: Record<BlockType, { label: string; icon: typeof Link2 }> = {
-  profile: { label: 'Perfil', icon: Share2 },
+const TYPE_LABELS: Record<BlockType, { label: string; icon: typeof User }> = {
+  header: { label: 'Cabeçalho', icon: User },
   link: { label: 'Link', icon: Link2 },
-  'link-featured': { label: 'Destaque', icon: Star },
-  socials: { label: 'Social', icon: Share2 },
-  project: { label: 'Projeto', icon: FolderOpen },
-  image: { label: 'Imagem', icon: Image },
+  product: { label: 'Produto', icon: ShoppingBag },
+  service: { label: 'Serviço', icon: Calendar },
+  gallery: { label: 'Galeria', icon: Images },
+  video: { label: 'Vídeo', icon: Video },
+  text: { label: 'Texto', icon: Type },
+  newsletter: { label: 'Newsletter', icon: Mail },
+  socials: { label: 'Redes sociais', icon: Share2 },
 }
 
 type SortableBlockProps = {
   block: Block
   onEdit: (block: Block) => void
   onRemove: (id: string) => void
-  isProfile?: boolean
+  isHeader?: boolean
   position?: number
   total?: number
 }
 
-export function SortableBlock({ block, onEdit, onRemove, isProfile, position, total }: SortableBlockProps) {
+export function SortableBlock({ block, onEdit, onRemove, isHeader, position, total }: SortableBlockProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: block.id })
 
   const style = {
@@ -36,11 +39,15 @@ export function SortableBlock({ block, onEdit, onRemove, isProfile, position, to
 
   const getDataSummary = () => {
     const d = block.data as any
-    if (block.type === 'profile') return d.displayName || 'Sem nome'
-    if (block.type === 'link' || block.type === 'link-featured') return d.title || d.url || 'Sem título'
+    if (block.type === 'header') return d.displayName || 'Sem nome'
+    if (block.type === 'link') return d.title || d.url || 'Sem título'
+    if (block.type === 'product') return d.title || 'Sem título'
+    if (block.type === 'service') return d.title || 'Sem título'
+    if (block.type === 'gallery') return `${d.images?.length || 0} imagens`
+    if (block.type === 'video') return d.title || 'Sem título'
+    if (block.type === 'text') return d.content?.slice(0, 30) || 'Vazio'
+    if (block.type === 'newsletter') return d.title || 'Newsletter'
     if (block.type === 'socials') return `${d.items?.length || 0} redes`
-    if (block.type === 'project') return d.title || 'Sem título'
-    if (block.type === 'image') return d.caption || 'Sem legenda'
     return 'Bloco'
   }
 
@@ -52,9 +59,9 @@ export function SortableBlock({ block, onEdit, onRemove, isProfile, position, to
         isDragging
           ? 'border-[var(--color-primary)] shadow-lg bg-[var(--color-surface-elevated)] scale-[1.02]'
           : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-border-strong)] hover:shadow-sm'
-      } ${isProfile ? 'border-l-4 border-l-[var(--color-primary)]' : ''}`}
+      } ${isHeader ? 'border-l-4 border-l-[var(--color-primary)]' : ''}`}
     >
-      {!isProfile ? (
+      {!isHeader ? (
         <button
           {...attributes}
           {...listeners}
@@ -67,7 +74,6 @@ export function SortableBlock({ block, onEdit, onRemove, isProfile, position, to
         <div className="w-9" />
       )}
 
-      {/* Position badge */}
       {position !== undefined && (
         <div className="w-6 h-6 rounded-full bg-[var(--color-primary-soft)] flex items-center justify-center flex-shrink-0">
           <span className="text-[10px] font-bold text-[var(--color-primary)]">
@@ -85,8 +91,7 @@ export function SortableBlock({ block, onEdit, onRemove, isProfile, position, to
         <p className="text-xs text-[var(--color-text-muted)] truncate">{getDataSummary()}</p>
       </div>
 
-      {/* Total counter */}
-      {total !== undefined && !isProfile && (
+      {total !== undefined && !isHeader && (
         <span className="text-[10px] text-[var(--color-text-muted)] bg-[var(--color-surface-hover)] px-1.5 py-0.5 rounded-full flex-shrink-0">
           {position !== undefined ? `${position + 1}/${total}` : ''}
         </span>
@@ -96,7 +101,7 @@ export function SortableBlock({ block, onEdit, onRemove, isProfile, position, to
         <button onClick={() => onEdit(block)} className="btn btn-ghost btn-sm p-1.5 min-w-[32px] min-h-[32px] flex items-center justify-center" title="Editar">
           <Pencil size={14} />
         </button>
-        {!isProfile && (
+        {!isHeader && (
           <button
             onClick={() => {
               if (window.confirm('Remover este bloco?')) onRemove(block.id)

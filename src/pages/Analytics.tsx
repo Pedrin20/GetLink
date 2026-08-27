@@ -1,50 +1,60 @@
 import { useAuth } from '../hooks/useAuth'
-import { useLinks } from '../hooks/useLinks'
+import { useBlocks } from '../hooks/useBlocks'
 import { MainLayout } from '../layouts/MainLayout'
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   Cell,
   PieChart,
   Pie,
   Legend
 } from 'recharts'
-import { TrendingUp, Link2, MousePointer, Calendar } from 'lucide-react'
+import { TrendingUp, LayoutGrid, MousePointer, Calendar } from 'lucide-react'
 
-const COLORS = ['#B85C38', '#D48C6A', '#E6BBA8', '#F2D6C8', '#F9EDE6']
+const COLORS = ['#8B5CF6', '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#EC4899', '#1F2937', '#06B6D4']
+
+const BLOCK_TYPE_LABELS: Record<string, string> = {
+  header: 'Cabecalho',
+  link: 'Link',
+  product: 'Produto',
+  service: 'Servico',
+  gallery: 'Galeria',
+  video: 'Video',
+  text: 'Texto',
+  newsletter: 'Newsletter',
+  socials: 'Redes Sociais',
+}
 
 export function Analytics() {
   const { user } = useAuth()
-  const { links, loading } = useLinks(user?.uid)
+  const { blocks, loading } = useBlocks(user?.uid)
 
-  const topLinks = [...links]
-    .filter(link => link.clicks && link.clicks > 0)
-    .sort((a, b) => (b.clicks || 0) - (a.clicks || 0))
+  const typeCounts = blocks.reduce((acc: Record<string, number>, b) => {
+    acc[b.type] = (acc[b.type] || 0) + 1
+    return acc
+  }, {})
+
+  const topTypes = Object.entries(typeCounts)
+    .sort(([, a], [, b]) => b - a)
     .slice(0, 5)
-    .map(link => ({
-      name: link.title.length > 20 ? link.title.substring(0, 20) + '...' : link.title,
-      clicks: link.clicks || 0,
-      fullTitle: link.title,
-      url: link.url,
+    .map(([type, count]) => ({
+      name: BLOCK_TYPE_LABELS[type] || type,
+      count,
     }))
 
-  const activeCount = links.filter(l => l.isActive !== false).length
-  const inactiveCount = links.filter(l => l.isActive === false).length
-  const pieData = [
-    { name: 'Ativos', value: activeCount },
-    { name: 'Inativos', value: inactiveCount },
-  ]
+  const pieData = Object.entries(typeCounts).map(([type, count]) => ({
+    name: BLOCK_TYPE_LABELS[type] || type,
+    value: count,
+  }))
 
-  // Estatísticas gerais
-  const totalLinks = links.length
-  const totalClicks = links.reduce((sum, l) => sum + (l.clicks || 0), 0)
-  const avgClicks = totalLinks > 0 ? (totalClicks / totalLinks).toFixed(1) : 0
-  const mostClickedLink = links.reduce((max, l) => (l.clicks || 0) > (max.clicks || 0) ? l : max, links[0] || {})
+  const totalBlocks = blocks.length
+  const uniqueTypes = Object.keys(typeCounts).length
+
   if (loading) {
     return (
       <MainLayout>
@@ -58,36 +68,22 @@ export function Analytics() {
   return (
     <MainLayout>
       <div className="space-y-6">
-        {/* Cabeçalho */}
         <div>
-          <h1 className="text-3xl font-serif text-[var(--color-ink)]">Analytics</h1>
+          <h1 className="text-3xl font-bold text-[var(--color-ink)]">Analytics</h1>
           <p className="text-[var(--color-muted)] text-sm">
-            Acompanhe o desempenho dos seus links.
+            Acompanhe o desempenho dos seus blocos.
           </p>
         </div>
 
-        {/* Cards de resumo */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4 shadow-sm">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-[var(--color-accent-light)] rounded-xl text-[var(--color-accent)]">
-                <MousePointer size={20} />
+                <LayoutGrid size={20} />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[var(--color-ink)]">{totalClicks}</p>
-                <p className="text-sm text-[var(--color-muted)]">Total de cliques</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-[var(--color-accent-light)] rounded-xl text-[var(--color-accent)]">
-                <Link2 size={20} />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-[var(--color-ink)]">{totalLinks}</p>
-                <p className="text-sm text-[var(--color-muted)]">Total de links</p>
+                <p className="text-2xl font-bold text-[var(--color-ink)]">{totalBlocks}</p>
+                <p className="text-sm text-[var(--color-muted)]">Total de blocos</p>
               </div>
             </div>
           </div>
@@ -98,8 +94,20 @@ export function Analytics() {
                 <TrendingUp size={20} />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[var(--color-ink)]">{avgClicks}</p>
-                <p className="text-sm text-[var(--color-muted)]">Média por link</p>
+                <p className="text-2xl font-bold text-[var(--color-ink)]">{uniqueTypes}</p>
+                <p className="text-sm text-[var(--color-muted)]">Tipos utilizados</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-[var(--color-border)] p-4 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-[var(--color-accent-light)] rounded-xl text-[var(--color-accent)]">
+                <MousePointer size={20} />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-[var(--color-ink)]">{typeCounts.link || 0}</p>
+                <p className="text-sm text-[var(--color-muted)]">Links ativos</p>
               </div>
             </div>
           </div>
@@ -111,41 +119,30 @@ export function Analytics() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-[var(--color-ink)]">
-                  {mostClickedLink?.title ? 
-                    (mostClickedLink.title.length > 15 ? mostClickedLink.title.substring(0, 15) + '…' : mostClickedLink.title) 
-                    : '—'}
+                  {totalBlocks > 0 ? 'Ativa' : 'Vazia'}
                 </p>
-                <p className="text-sm text-[var(--color-muted)]">Link mais clicado</p>
+                <p className="text-sm text-[var(--color-muted)]">Status da pagina</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Gráficos - duas colunas */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Gráfico de barras - Top 5 links */}
           <div className="bg-white rounded-2xl border border-[var(--color-border)] p-5 shadow-sm">
-            <h2 className="text-lg font-serif text-[var(--color-ink)] mb-4">Links mais clicados</h2>
-            {topLinks.length === 0 ? (
+            <h2 className="text-lg font-bold text-[var(--color-ink)] mb-4">Blocos mais usados</h2>
+            {topTypes.length === 0 ? (
               <p className="text-sm text-[var(--color-muted)] py-8 text-center">
-                Nenhum clique registrado ainda.
+                Nenhum bloco adicionado ainda.
               </p>
             ) : (
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart
-                  data={topLinks}
-                  layout="vertical"
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                >
+                <BarChart data={topTypes} layout="vertical" margin={{ top: 5, right: 30, left: 80, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis type="number" />
                   <YAxis dataKey="name" type="category" width={100} />
-                  <Tooltip 
-                    formatter={(value) => [`${value} cliques`, 'Cliques']}
-                    labelFormatter={(label) => `Link: ${label}`}
-                  />
-                  <Bar dataKey="clicks" fill="#B85C38" radius={[0, 4, 4, 0]}>
-                    {topLinks.map((_entry, index) => (
+                  <Tooltip formatter={(value) => [`${value} blocos`, 'Quantidade']} />
+                  <Bar dataKey="count" radius={[0, 4, 4, 0]}>
+                    {topTypes.map((_, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Bar>
@@ -154,12 +151,11 @@ export function Analytics() {
             )}
           </div>
 
-          {/* Gráfico de pizza - Status dos links */}
           <div className="bg-white rounded-2xl border border-[var(--color-border)] p-5 shadow-sm">
-            <h2 className="text-lg font-serif text-[var(--color-ink)] mb-4">Status dos links</h2>
-            {totalLinks === 0 ? (
+            <h2 className="text-lg font-bold text-[var(--color-ink)] mb-4">Distribuicao de tipos</h2>
+            {pieData.length === 0 ? (
               <p className="text-sm text-[var(--color-muted)] py-8 text-center">
-                Nenhum link cadastrado.
+                Nenhum bloco cadastrado.
               </p>
             ) : (
               <ResponsiveContainer width="100%" height={300}>
@@ -175,8 +171,9 @@ export function Analytics() {
                     dataKey="value"
                     label={(props: any) => `${props.name || ''}: ${((props.percent || 0) * 100).toFixed(0)}%`}
                   >
-                    <Cell fill="#B85C38" />
-                    <Cell fill="#E6E4E0" />
+                    {pieData.map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
                   </Pie>
                   <Legend />
                   <Tooltip />
@@ -186,46 +183,37 @@ export function Analytics() {
           </div>
         </div>
 
-        {/* Tabela de todos os links com cliques */}
         <div className="bg-white rounded-2xl border border-[var(--color-border)] p-5 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-serif text-[var(--color-ink)]">Todos os links</h2>
-            <span className="text-sm text-[var(--color-muted)]">{totalLinks} links</span>
+            <h2 className="text-lg font-bold text-[var(--color-ink)]">Todos os blocos</h2>
+            <span className="text-sm text-[var(--color-muted)]">{totalBlocks} blocos</span>
           </div>
-          
-          {links.length === 0 ? (
+
+          {blocks.length === 0 ? (
             <p className="text-sm text-[var(--color-muted)] py-8 text-center">
-              Nenhum link cadastrado ainda.
+              Nenhum bloco cadastrado ainda.
             </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-[var(--color-border)]">
-                    <th className="text-left py-3 px-2 font-medium text-[var(--color-muted)]">Título</th>
-                    <th className="text-left py-3 px-2 font-medium text-[var(--color-muted)] hidden sm:table-cell">URL</th>
-                    <th className="text-right py-3 px-2 font-medium text-[var(--color-muted)]">Cliques</th>
-                    <th className="text-center py-3 px-2 font-medium text-[var(--color-muted)]">Status</th>
+                    <th className="text-left py-3 px-2 font-medium text-[var(--color-muted)]">Tipo</th>
+                    <th className="text-left py-3 px-2 font-medium text-[var(--color-muted)]">Conteudo</th>
+                    <th className="text-right py-3 px-2 font-medium text-[var(--color-muted)]">Ordem</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {links.map((link) => (
-                    <tr key={link.id} className="border-b border-[var(--color-border)] last:border-0 hover:bg-[var(--color-accent-light)] transition">
-                      <td className="py-3 px-2 font-medium text-[var(--color-ink)] truncate max-w-[150px]">
-                        {link.title}
+                  {blocks.map((block) => (
+                    <tr key={block.id} className="border-b border-[var(--color-border)] last:border-0 hover:bg-[var(--color-accent-light)] transition">
+                      <td className="py-3 px-2 font-medium text-[var(--color-ink)] capitalize">
+                        {BLOCK_TYPE_LABELS[block.type] || block.type}
                       </td>
-                      <td className="py-3 px-2 text-[var(--color-muted)] truncate max-w-[200px] hidden sm:table-cell">
-                        {link.url}
+                      <td className="py-3 px-2 text-[var(--color-muted)] truncate max-w-[200px]">
+                        {(block.data as any).title || (block.data as any).displayName || (block.data as any).content?.slice(0, 50) || '—'}
                       </td>
                       <td className="py-3 px-2 text-right font-medium text-[var(--color-ink)]">
-                        {link.clicks || 0}
-                      </td>
-                      <td className="py-3 px-2 text-center">
-                        <span className={`inline-block px-2 py-0.5 rounded-full text-xs ${
-                          link.isActive !== false ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-500'
-                        }`}>
-                          {link.isActive !== false ? 'Ativo' : 'Inativo'}
-                        </span>
+                        {block.order + 1}
                       </td>
                     </tr>
                   ))}

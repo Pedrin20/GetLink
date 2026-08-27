@@ -7,7 +7,7 @@ export interface Link {
   createdAt?: any
   clicks?: number
   order?: number
-  isActive?: boolean  
+  isActive?: boolean
 }
 
 export interface UserProfile {
@@ -25,16 +25,24 @@ export type LinkInput = Omit<Link, 'id' | 'createdAt' | 'clicks' | 'order'>
 export type LinkWithId = Required<Pick<Link, 'id' | 'title' | 'url' | 'userId'>> & Omit<Link, 'id' | 'title' | 'url' | 'userId'>
 
 /* ═══════════════════════════════════════════════════════════════
-   BLOCK SYSTEM
+   BLOCK SYSTEM — GetLink Style
    ═══════════════════════════════════════════════════════════════ */
 
-export type BlockType = 'profile' | 'link' | 'link-featured' | 'socials' | 'project' | 'image'
+export type BlockType =
+  | 'header'
+  | 'link'
+  | 'product'
+  | 'service'
+  | 'gallery'
+  | 'video'
+  | 'text'
+  | 'newsletter'
+  | 'socials'
 
-export interface ProfileBlockData {
+export interface HeaderBlockData {
   displayName: string
   bio: string
   avatarUrl: string
-  themeColor: string
 }
 
 export interface LinkBlockData {
@@ -43,36 +51,55 @@ export interface LinkBlockData {
   description: string
 }
 
-export interface LinkFeaturedBlockData {
+export interface ProductBlockData {
   title: string
-  url: string
   description: string
-  imageUrl?: string
+  imageUrl: string
+  price: string
+  linkUrl: string
+}
+
+export interface ServiceBlockData {
+  title: string
+  description: string
+  actionLabel: string
+  actionUrl: string
+}
+
+export interface GalleryBlockData {
+  images: { url: string; caption?: string }[]
+}
+
+export interface VideoBlockData {
+  title: string
+  embedUrl: string
+}
+
+export interface TextBlockData {
+  content: string
+}
+
+export interface NewsletterBlockData {
+  title: string
+  description: string
+  placeholder: string
+  buttonText: string
 }
 
 export interface SocialsBlockData {
   items: { platform: string; url: string }[]
 }
 
-export interface ProjectBlockData {
-  title: string
-  description: string
-  imageUrl: string
-  linkUrl: string
-}
-
-export interface ImageBlockData {
-  imageUrl: string
-  caption: string
-}
-
 export type BlockDataMap = {
-  profile: ProfileBlockData
+  header: HeaderBlockData
   link: LinkBlockData
-  'link-featured': LinkFeaturedBlockData
+  product: ProductBlockData
+  service: ServiceBlockData
+  gallery: GalleryBlockData
+  video: VideoBlockData
+  text: TextBlockData
+  newsletter: NewsletterBlockData
   socials: SocialsBlockData
-  project: ProjectBlockData
-  image: ImageBlockData
 }
 
 export interface Block<T extends BlockType = BlockType> {
@@ -81,4 +108,32 @@ export interface Block<T extends BlockType = BlockType> {
   order: number
   userId: string
   data: BlockDataMap[T]
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PAGE DESIGN SETTINGS
+   ═══════════════════════════════════════════════════════════════ */
+
+export type DesignPreset = 'neon' | 'editorial' | 'minimal-mono' | 'sunset' | 'brutalist'
+export type TitleFont = 'grotesk' | 'sans' | 'serifada' | 'mono'
+export type BlockStyle = 'filled' | 'outline' | 'glass'
+export type Density = 'compact' | 'standard' | 'spaced'
+export type CornerStyle = 'sharp' | 'soft' | 'medium' | 'round'
+
+export interface PageSettings {
+  preset: DesignPreset
+  accentColor: string
+  titleFont: TitleFont
+  blockStyle: BlockStyle
+  density: Density
+  corners: CornerStyle
+}
+
+export const DEFAULT_PAGE_SETTINGS: PageSettings = {
+  preset: 'neon',
+  accentColor: '#8B5CF6',
+  titleFont: 'grotesk',
+  blockStyle: 'glass',
+  density: 'standard',
+  corners: 'medium',
 }

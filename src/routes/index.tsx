@@ -2,19 +2,19 @@ import { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
-// Eagerly loaded (critical path - seen before auth)
+// Eagerly loaded (critical path)
 import { Login } from '../pages/Login';
 import { Redirect } from '../pages/Redirect';
 
-// Lazy-loaded dashboard pages (code-split into separate chunks)
+// Lazy-loaded dashboard pages
 const Dashboard = lazy(() => import('../pages/Dashboard').then(m => ({ default: m.Dashboard })));
-const Links = lazy(() => import('../pages/Links').then(m => ({ default: m.Links })));
+const MyPage = lazy(() => import('../pages/MyPage').then(m => ({ default: m.MyPage })));
+const Design = lazy(() => import('../pages/Design').then(m => ({ default: m.Design })));
 const Analytics = lazy(() => import('../pages/Analytics').then(m => ({ default: m.Analytics })));
 const Settings = lazy(() => import('../pages/Settings').then(m => ({ default: m.Settings })));
 const ProfileEdit = lazy(() => import('../pages/ProfileEdit').then(m => ({ default: m.ProfileEdit })));
 const PublicProfile = lazy(() => import('../pages/PublicProfile').then(m => ({ default: m.PublicProfile })));
 
-// Loading fallback for lazy routes
 function PageLoader() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--color-paper)]">
@@ -51,9 +51,14 @@ export function AppRoutes() {
             <Dashboard />
           </PrivateRoute>
         } />
-        <Route path="/dashboard/links" element={
+        <Route path="/dashboard/my-page" element={
           <PrivateRoute>
-            <Links />
+            <MyPage />
+          </PrivateRoute>
+        } />
+        <Route path="/dashboard/design" element={
+          <PrivateRoute>
+            <Design />
           </PrivateRoute>
         } />
         <Route path="/dashboard/analytics" element={

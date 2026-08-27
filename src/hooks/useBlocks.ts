@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
-import type { Block, BlockType, BlockDataMap } from '../types'
+import type { Block, BlockType, BlockDataMap, PageSettings } from '../types'
 import {
   createBlock,
   deleteBlock,
@@ -7,6 +7,10 @@ import {
   updateBlockData,
   reorderBlocks as reorderBlocksService,
 } from '../services/blockService'
+import {
+  subscribeToPageSettings,
+  savePageSettings as savePageSettingsService,
+} from '../services/settingsService'
 
 export function useBlocks(userId?: string) {
   const [blocks, setBlocks] = useState<Block[]>([])
@@ -49,4 +53,32 @@ export function useBlocks(userId?: string) {
   }, [])
 
   return { blocks, loading, addBlock, removeBlock, updateBlock, reorder }
+}
+
+export function usePageSettings(userId?: string) {
+  const [settings, setSettings] = useState<PageSettings | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (!userId) {
+      setSettings(null)
+      setLoading(false)
+      return
+    }
+
+    setLoading(true)
+    const unsub = subscribeToPageSettings(userId, (s) => {
+      setSettings(s)
+      setLoading(false)
+    })
+
+    return () => unsub()
+  }, [userId])
+
+  const saveSettings = useCallback(async (newSettings: PageSettings) => {
+    if (!userId) return
+    await savePageSettingsService(userId, newSettings)
+  }, [userId])
+
+  return { settings, loading, saveSettings }
 }

@@ -1,10 +1,13 @@
 import type { Block } from '../../types'
-import { ProfileBlock } from './ProfileBlock'
+import { HeaderBlock } from './HeaderBlock'
 import { LinkBlock } from './LinkBlock'
-import { FeaturedBlock } from './FeaturedBlock'
+import { ProductBlock } from './ProductBlock'
+import { ServiceBlock } from './ServiceBlock'
+import { GalleryBlock } from './GalleryBlock'
+import { VideoBlock } from './VideoBlock'
+import { TextBlock } from './TextBlock'
+import { NewsletterBlock } from './NewsletterBlock'
 import { SocialsBlock } from './SocialsBlock'
-import { ProjectBlock } from './ProjectBlock'
-import { ImageBlock } from './ImageBlock'
 
 type BlockRendererProps = {
   block: Block
@@ -13,18 +16,24 @@ type BlockRendererProps = {
 
 export function BlockRenderer({ block, isEditing }: BlockRendererProps) {
   switch (block.type) {
-    case 'profile':
-      return <ProfileBlock data={block.data as any} />
+    case 'header':
+      return <HeaderBlock data={block.data as any} isEditing={isEditing} />
     case 'link':
       return <LinkBlock data={block.data as any} isEditing={isEditing} />
-    case 'link-featured':
-      return <FeaturedBlock data={block.data as any} isEditing={isEditing} />
+    case 'product':
+      return <ProductBlock data={block.data as any} isEditing={isEditing} />
+    case 'service':
+      return <ServiceBlock data={block.data as any} isEditing={isEditing} />
+    case 'gallery':
+      return <GalleryBlock data={block.data as any} isEditing={isEditing} />
+    case 'video':
+      return <VideoBlock data={block.data as any} isEditing={isEditing} />
+    case 'text':
+      return <TextBlock data={block.data as any} isEditing={isEditing} />
+    case 'newsletter':
+      return <NewsletterBlock data={block.data as any} isEditing={isEditing} />
     case 'socials':
       return <SocialsBlock data={block.data as any} isEditing={isEditing} />
-    case 'project':
-      return <ProjectBlock data={block.data as any} isEditing={isEditing} />
-    case 'image':
-      return <ImageBlock data={block.data as any} />
     default:
       return null
   }

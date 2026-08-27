@@ -2,43 +2,21 @@ import { useState, useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { useUserProfile } from '../hooks/useUserProfile'
-import { fetchUserBlocks } from '../services/blockService'
-import type { Block } from '../types'
+import { fetchUserBlocks, fetchPageSettings } from '../services/blockService'
+import type { Block, PageSettings } from '../types'
+import { DEFAULT_PAGE_SETTINGS } from '../types'
 import { BlockRenderer } from '../components/blocks/BlockRenderer'
 
-/** Returns perceived brightness (0–255) of a hex color */
-function luminance(hex: string): number {
-  const h = hex.replace('#', '')
-  const r = parseInt(h.substring(0, 2), 16)
-  const g = parseInt(h.substring(2, 4), 16)
-  const b = parseInt(h.substring(4, 6), 16)
-  return 0.299 * r + 0.587 * g + 0.114 * b
-}
-
-function getBlockVars(themeColor: string) {
-  const isDark = luminance(themeColor) < 140
-  if (isDark) {
-    return {
-      className: 'public-blocks-dark',
-      vars: {
-        '--profile-accent': themeColor,
-        '--block-bg': 'rgba(255,255,255,0.08)',
-        '--block-border': 'rgba(255,255,255,0.12)',
-        '--block-text': 'rgba(255,255,255,0.95)',
-        '--block-text-secondary': 'rgba(255,255,255,0.7)',
-        '--block-text-muted': 'rgba(255,255,255,0.45)',
-      } as React.CSSProperties,
-    }
-  }
+function getBlockVars(accentColor: string) {
   return {
-    className: 'public-blocks-light',
+    className: 'public-blocks-dark',
     vars: {
-      '--profile-accent': themeColor,
-      '--block-bg': 'rgba(255,255,255,0.92)',
-      '--block-border': 'rgba(0,0,0,0.06)',
-      '--block-text': '#1a1a1a',
-      '--block-text-secondary': '#555555',
-      '--block-text-muted': '#888888',
+      '--profile-accent': accentColor,
+      '--block-bg': 'rgba(255,255,255,0.08)',
+      '--block-border': 'rgba(255,255,255,0.12)',
+      '--block-text': 'rgba(255,255,255,0.95)',
+      '--block-text-secondary': 'rgba(255,255,255,0.7)',
+      '--block-text-muted': 'rgba(255,255,255,0.45)',
     } as React.CSSProperties,
   }
 }
@@ -47,31 +25,36 @@ export function PublicProfile() {
   const { username } = useParams<{ username: string }>()
   const { profile, loading: profileLoading, error } = useUserProfile(undefined, username)
   const [blocks, setBlocks] = useState<Block[]>([])
+  const [pageSettings, setPageSettings] = useState<PageSettings>(DEFAULT_PAGE_SETTINGS)
   const [blocksLoading, setBlocksLoading] = useState(true)
 
   useEffect(() => {
     if (!profile?.id) return
     setBlocksLoading(true)
-    fetchUserBlocks(profile.id).then((items) => {
-      setBlocks(items)
+    Promise.all([
+      fetchUserBlocks(profile.id),
+      fetchPageSettings(profile.id),
+    ]).then(([blocksData, settings]) => {
+      setBlocks(blocksData)
+      setPageSettings(settings)
       setBlocksLoading(false)
     }).catch(() => setBlocksLoading(false))
   }, [profile?.id])
 
   if (profileLoading || blocksLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--color-background)]">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[var(--color-primary)] border-t-transparent" />
+      <div className="min-h-screen flex items-center justify-center bg-gray-900">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent" />
       </div>
     )
   }
 
   if (error || !profile) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--color-background)] text-[var(--color-text-muted)]">
+      <div className="min-h-screen flex items-center justify-center bg-gray-900 text-gray-400">
         <div className="text-center">
-          <p className="text-2xl mb-2">😕</p>
-          <p>Perfil não encontrado</p>
+          <p className="text-2xl mb-2">:(</p>
+          <p>Perfil nao encontrado</p>
         </div>
       </div>
     )
@@ -79,15 +62,19 @@ export function PublicProfile() {
 
   const siteUrl = window.location.origin
   const profileUrl = `${siteUrl}/${profile.username}`
-  const profileBlock = blocks.find((b) => b.type === 'profile')
-  const profileData = profileBlock?.data as any
-  const title = profileData?.displayName
-    ? `${profileData.displayName} | GetLink`
+  const headerBlock = blocks.find((b) => b.type === 'header')
+  const headerData = headerBlock?.data as any
+  const title = headerData?.displayName
+    ? `${headerData.displayName} | GetLink`
     : `${profile.displayName} | GetLink`
-  const description = profileData?.bio || profile.bio || `${profile.displayName} está no GetLink!`
-  const imageUrl = profileData?.avatarUrl || profile.avatarUrl || `${siteUrl}/default-og-image.png`
-  const themeColor = profileData?.themeColor || profile.themeColor || '#F97316'
-  const blockTheme = useMemo(() => getBlockVars(themeColor), [themeColor])
+  const description = headerData?.bio || profile.bio || `${profile.displayName} esta no GetLink!`
+  const imageUrl = headerData?.avatarUrl || profile.avatarUrl || `${siteUrl}/default-og-image.png`
+  const accentColor = pageSettings.accentColor
+  const blockTheme = useMemo(() => getBlockVars(accentColor), [accentColor])
+
+  // Build grid layout: header spans full width, other blocks in 2 columns
+  const headerBlocks = blocks.filter(b => b.type === 'header')
+  const otherBlocks = blocks.filter(b => b.type !== 'header')
 
   return (
     <>
@@ -110,21 +97,41 @@ export function PublicProfile() {
       </Helmet>
 
       <div
-        className={`min-h-screen py-10 px-4 transition-colors duration-300 ${blockTheme.className}`}
-        style={{ backgroundColor: themeColor, ...blockTheme.vars }}
+        className={`min-h-screen py-10 px-4 transition-colors duration-300 bg-gray-900 ${blockTheme.className}`}
+        style={blockTheme.vars}
       >
-        <div className="max-w-lg mx-auto space-y-4">
+        <div className="max-w-2xl mx-auto space-y-4">
           {blocks.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-lg" style={{ color: 'rgba(255,255,255,0.7)' }}>Nenhum conteúdo disponível.</p>
+              <p className="text-lg text-gray-400">Nenhum conteudo disponivel.</p>
             </div>
           ) : (
-            blocks.map((block) => (
-              <div key={block.id}>
-                <BlockRenderer block={block} />
+            <>
+              {/* Header block - full width */}
+              {headerBlocks.map(block => (
+                <div key={block.id}>
+                  <BlockRenderer block={block} />
+                </div>
+              ))}
+
+              {/* Other blocks - grid layout */}
+              <div className="grid grid-cols-2 gap-4">
+                {otherBlocks.map((block) => (
+                  <div
+                    key={block.id}
+                    className={block.type === 'product' || block.type === 'gallery' || block.type === 'video' || block.type === 'newsletter' || block.type === 'text' ? 'col-span-2' : ''}
+                  >
+                    <BlockRenderer block={block} />
+                  </div>
+                ))}
               </div>
-            ))
+            </>
           )}
+
+          {/* Footer */}
+          <div className="text-center pt-8 pb-4">
+            <p className="text-xs text-gray-500">Feito com GetLink</p>
+          </div>
         </div>
       </div>
     </>

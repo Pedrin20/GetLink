@@ -30,11 +30,23 @@ export function subscribeToPageSettings(
   userId: string,
   cb: (settings: PageSettings) => void
 ): () => void {
-  return onSnapshot(getUserSettingsRef(userId), (snap) => {
-    if (snap.exists()) {
-      cb({ ...DEFAULT_PAGE_SETTINGS, ...snap.data() } as PageSettings)
-    } else {
-      cb(DEFAULT_PAGE_SETTINGS)
-    }
-  })
+  try {
+    return onSnapshot(
+      getUserSettingsRef(userId),
+      (snap) => {
+        if (snap.exists()) {
+          cb({ ...DEFAULT_PAGE_SETTINGS, ...snap.data() } as PageSettings)
+        } else {
+          cb(DEFAULT_PAGE_SETTINGS)
+        }
+      },
+      () => {
+        // On permission error or any error, return defaults
+        cb(DEFAULT_PAGE_SETTINGS)
+      }
+    )
+  } catch {
+    cb(DEFAULT_PAGE_SETTINGS)
+    return () => {}
+  }
 }

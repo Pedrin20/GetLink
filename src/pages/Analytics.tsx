@@ -14,7 +14,8 @@ import {
   Pie,
   Legend
 } from 'recharts'
-import { TrendingUp, LayoutGrid, MousePointer, Calendar } from 'lucide-react'
+import { TrendingUp, LayoutGrid, MousePointer, Calendar, ArrowLeft } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 const COLORS = ['#8B5CF6', '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#EC4899', '#1F2937', '#06B6D4']
 
@@ -52,6 +53,7 @@ export function Analytics() {
     value: count,
   }))
 
+  const navigate = useNavigate()
   const totalBlocks = blocks.length
   const uniqueTypes = Object.keys(typeCounts).length
 
@@ -68,11 +70,22 @@ export function Analytics() {
   return (
     <MainLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-[var(--color-ink)]">Analytics</h1>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => navigate('/dashboard')}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors hover:bg-gray-100"
+            title="Voltar"
+            style={{ color: 'var(--color-muted)' }}
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+          <div>
+            <h1 className="text-3xl font-bold text-[var(--color-ink)]">Analytics</h1>
           <p className="text-[var(--color-muted)] text-sm">
             Acompanhe o desempenho dos seus blocos.
           </p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

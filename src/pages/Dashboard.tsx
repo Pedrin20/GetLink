@@ -13,19 +13,19 @@ import { useNavigate } from 'react-router-dom'
 
 function StatCard({ icon: Icon, label, value, trend }: { icon: any; label: string; value: number | string; trend?: string }) {
   return (
-    <div className="bg-white rounded-2xl border border-[var(--color-border)] p-5 shadow-sm hover:shadow-md transition">
+    <div className="rounded-2xl border p-5 transition" style={{ borderColor: 'oklch(1 0 0 / 10%)', background: 'oklch(0.21 0.018 285)' }}>
       <div className="flex items-center justify-between mb-2">
-        <div className="p-2 bg-[var(--color-accent-light)] rounded-xl text-[var(--color-accent)]">
+        <div className="p-2 rounded-xl" style={{ background: 'oklch(0.26 0.02 285)', color: 'oklch(0.58 0.24 285)' }}>
           <Icon size={20} />
         </div>
         {trend && (
-          <span className="text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
+          <span className="text-xs px-2 py-0.5 rounded-full" style={{ color: '#4ADE80', background: 'rgba(74, 222, 128, 0.15)' }}>
             {trend}
           </span>
         )}
       </div>
-      <p className="text-2xl font-bold text-[var(--color-ink)]">{value}</p>
-      <p className="text-sm text-[var(--color-muted)]">{label}</p>
+      <p className="text-2xl font-bold text-white">{value}</p>
+      <p className="text-sm text-gray-400">{label}</p>
     </div>
   )
 }
@@ -43,7 +43,7 @@ export function Dashboard() {
     return (
       <MainLayout>
         <div className="flex justify-center items-center min-h-[60vh]">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-[var(--color-accent)] border-t-transparent" />
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-[oklch(0.58_0.24_285)] border-t-transparent" />
         </div>
       </MainLayout>
     )
@@ -55,17 +55,18 @@ export function Dashboard() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-[var(--color-ink)]">Dashboard</h1>
-            <p className="text-[var(--color-muted)] text-sm">
-              Bem-vindo de volta! Aqui esta um resumo da sua pagina.
+            <h1 className="text-2xl font-bold tracking-tight text-white">Olá, {user?.displayName || 'usuário'}</h1>
+            <p className="text-sm text-gray-400">
+              Aqui está o desempenho da sua página nos últimos 30 dias.
             </p>
           </div>
           <button
             onClick={() => navigate('/dashboard/my-page')}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-accent)] text-white font-medium rounded-xl hover:brightness-110 transition"
+            className="inline-flex items-center gap-2 px-4 py-2 text-white font-medium rounded-lg transition hover:opacity-90"
+            style={{ background: 'oklch(0.58 0.24 285)' }}
           >
             <LayoutGrid size={18} />
-            Editar pagina
+            Editar página
           </button>
         </div>
 
@@ -77,19 +78,21 @@ export function Dashboard() {
         </div>
 
         {/* Quick actions */}
-        <div className="bg-white rounded-2xl border border-[var(--color-border)] p-5 shadow-sm">
-          <h2 className="text-lg font-bold text-[var(--color-ink)] mb-3">Acoes rapidas</h2>
+        <div className="rounded-2xl border p-5" style={{ borderColor: 'oklch(1 0 0 / 10%)', background: 'oklch(0.21 0.018 285)' }}>
+          <h2 className="text-lg font-bold text-white mb-3">Ações rápidas</h2>
           <div className="flex flex-wrap gap-3">
             <button
               onClick={() => navigate('/dashboard/my-page')}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-accent)] text-white font-medium rounded-xl hover:brightness-110 transition"
+              className="inline-flex items-center gap-2 px-4 py-2 text-white font-medium rounded-lg transition hover:opacity-90"
+              style={{ background: 'oklch(0.58 0.24 285)' }}
             >
               <LayoutGrid size={18} />
-              Minha Pagina
+              Minha Página
             </button>
             <button
               onClick={() => navigate('/dashboard/design')}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[var(--color-border)] text-[var(--color-ink)] font-medium rounded-xl hover:bg-[var(--color-accent-light)] transition"
+              className="inline-flex items-center gap-2 px-4 py-2 font-medium rounded-lg transition"
+              style={{ border: '1px solid oklch(1 0 0 / 12%)', color: 'white' }}
             >
               <Palette size={18} />
               Design
@@ -98,16 +101,18 @@ export function Dashboard() {
             {currentProfile?.username && (
               <button
                 onClick={() => navigate('/' + currentProfile.username)}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[var(--color-border)] text-[var(--color-ink)] font-medium rounded-xl hover:bg-[var(--color-accent-light)] transition"
+                className="inline-flex items-center gap-2 px-4 py-2 font-medium rounded-lg transition"
+                style={{ border: '1px solid oklch(1 0 0 / 12%)', color: 'white' }}
               >
                 <Eye size={18} />
-                Ver perfil publico
+                Ver perfil público
               </button>
             )}
 
             <button
               onClick={() => navigate('/dashboard/analytics')}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[var(--color-border)] text-[var(--color-ink)] font-medium rounded-xl hover:bg-[var(--color-accent-light)] transition"
+              className="inline-flex items-center gap-2 px-4 py-2 font-medium rounded-lg transition"
+              style={{ border: '1px solid oklch(1 0 0 / 12%)', color: 'white' }}
             >
               <TrendingUp size={18} />
               Ver analytics
@@ -116,34 +121,34 @@ export function Dashboard() {
         </div>
 
         {/* Recent blocks */}
-        <div className="bg-white rounded-2xl border border-[var(--color-border)] p-5 shadow-sm">
+        <div className="rounded-2xl border p-5" style={{ borderColor: 'oklch(1 0 0 / 10%)', background: 'oklch(0.21 0.018 285)' }}>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-[var(--color-ink)]">Seus blocos</h2>
+            <h2 className="text-lg font-bold text-white">Seus blocos</h2>
             <button
               onClick={() => navigate('/dashboard/my-page')}
-              className="text-sm text-[var(--color-accent)] hover:underline flex items-center gap-1"
+              className="text-sm hover:underline flex items-center gap-1" style={{ color: 'oklch(0.58 0.24 285)' }}
             >
               Ver todos <ArrowRight size={16} />
             </button>
           </div>
 
           {blocks.length === 0 ? (
-            <p className="text-sm text-[var(--color-muted)] py-8 text-center">
-              Nenhum bloco cadastrado ainda. Comece adicionando blocos na sua pagina!
+            <p className="text-sm text-gray-400 py-8 text-center">
+              Nenhum bloco cadastrado ainda. Comece adicionando blocos na sua página!
             </p>
           ) : (
             <div className="space-y-2">
               {blocks.slice(0, 5).map((block) => (
-                <div key={block.id} className="flex items-center justify-between p-3 bg-[var(--color-paper)] rounded-xl border border-[var(--color-border)]">
+                <div key={block.id} className="flex items-center justify-between p-3 rounded-xl" style={{ border: '1px solid oklch(1 0 0 / 10%)' }}>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-[var(--color-ink)] truncate capitalize">
+                    <p className="text-sm font-medium text-white truncate capitalize">
                       {block.type}
                     </p>
-                    <p className="text-xs text-[var(--color-muted)] truncate">
+                    <p className="text-xs text-gray-400 truncate">
                       {(block.data as any).title || (block.data as any).displayName || (block.data as any).content?.slice(0, 50) || 'Bloco'}
                     </p>
                   </div>
-                  <span className="text-xs bg-[var(--color-accent-light)] px-2 py-0.5 rounded-full text-[var(--color-accent)] capitalize">
+                  <span className="text-xs px-2 py-0.5 rounded-full capitalize" style={{ background: 'oklch(0.58 0.24 285 / 15%)', color: 'oklch(0.58 0.24 285)' }}>
                     {block.type}
                   </span>
                 </div>

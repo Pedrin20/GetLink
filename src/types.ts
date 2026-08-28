@@ -1,3 +1,7 @@
+/* ═══════════════════════════════════════════════════════════════
+   LEGACY TYPES
+   ═══════════════════════════════════════════════════════════════ */
+
 export interface Link {
   id: string
   title: string
@@ -38,6 +42,8 @@ export type BlockType =
   | 'text'
   | 'newsletter'
   | 'socials'
+
+export type BlockSize = '1x1' | '2x1' | '2x2' | 'full'
 
 export interface HeaderBlockData {
   displayName: string
@@ -105,9 +111,95 @@ export type BlockDataMap = {
 export interface Block<T extends BlockType = BlockType> {
   id: string
   type: T
+  size: BlockSize
   order: number
   userId: string
   data: BlockDataMap[T]
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BLOCK TYPE DEFINITIONS
+   ═══════════════════════════════════════════════════════════════ */
+
+export interface BlockTypeDef {
+  type: BlockType
+  label: string
+  description: string
+  defaultSize: BlockSize
+  allowedSizes: BlockSize[]
+}
+
+export const BLOCK_LIBRARY: BlockTypeDef[] = [
+  {
+    type: 'header',
+    label: 'Cabeçalho',
+    description: 'Sua foto, nome e bio',
+    defaultSize: 'full',
+    allowedSizes: ['full', '2x1'],
+  },
+  {
+    type: 'link',
+    label: 'Link',
+    description: 'Botão para qualquer URL',
+    defaultSize: '2x1',
+    allowedSizes: ['1x1', '2x1'],
+  },
+  {
+    type: 'product',
+    label: 'Produto',
+    description: 'Item com preço e imagem',
+    defaultSize: '2x2',
+    allowedSizes: ['2x1', '2x2'],
+  },
+  {
+    type: 'service',
+    label: 'Serviço',
+    description: 'Agendamento ou orçamento',
+    defaultSize: '2x1',
+    allowedSizes: ['1x1', '2x1', '2x2'],
+  },
+  {
+    type: 'gallery',
+    label: 'Galeria',
+    description: 'Grade de imagens',
+    defaultSize: '2x2',
+    allowedSizes: ['2x1', '2x2'],
+  },
+  {
+    type: 'video',
+    label: 'Vídeo',
+    description: 'YouTube, Vimeo, embed',
+    defaultSize: '2x2',
+    allowedSizes: ['2x1', '2x2'],
+  },
+  {
+    type: 'text',
+    label: 'Texto',
+    description: 'Bloco de texto livre',
+    defaultSize: '2x1',
+    allowedSizes: ['1x1', '2x1', 'full'],
+  },
+  {
+    type: 'newsletter',
+    label: 'Newsletter',
+    description: 'Captura de e-mails',
+    defaultSize: '2x1',
+    allowedSizes: ['2x1', 'full'],
+  },
+  {
+    type: 'socials',
+    label: 'Redes sociais',
+    description: 'Ícones de perfis',
+    defaultSize: '1x1',
+    allowedSizes: ['1x1', '2x1'],
+  },
+]
+
+export const SIZE_LABELS: Record<BlockSize, string> = {
+  '1x1': 'Pequeno',
+  '2x1': 'Largo',
+  '2x2': 'Grande',
+  'full': 'Faixa',
 }
 
 /* ═══════════════════════════════════════════════════════════════

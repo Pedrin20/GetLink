@@ -14,7 +14,7 @@ import {
   getDoc,
 } from 'firebase/firestore'
 import { db } from '../firebase'
-import type { Block, BlockType, BlockDataMap, PageSettings } from '../types'
+import type { Block, BlockType, BlockSize, BlockDataMap, PageSettings } from '../types'
 import { DEFAULT_PAGE_SETTINGS } from '../types'
 
 const blocksCol = collection(db, 'blocks')
@@ -22,13 +22,16 @@ const blocksCol = collection(db, 'blocks')
 export async function createBlock<T extends BlockType>(
   userId: string,
   type: T,
-  data: BlockDataMap[T],
+  data: BlockDataMap[T] & { size?: BlockSize },
   currentMaxOrder: number = 0
 ): Promise<string> {
+  const size = (data as any).size || '2x1'
+  const { size: _, ...cleanData } = data as any
   const docRef = await addDoc(blocksCol, {
     userId,
     type,
-    data,
+    size,
+    data: cleanData,
     order: currentMaxOrder,
     createdAt: serverTimestamp(),
   })
@@ -67,19 +70,32 @@ export function subscribeToUserBlocks(
     orderBy('order', 'asc')
   )
 
-  return onSnapshot(q, (snap) => {
-    const items: Block[] = snap.docs.map((d) => {
-      const data = d.data()
-      return {
-        id: d.id,
-        type: data.type as BlockType,
-        order: data.order ?? 0,
-        userId: data.userId || '',
-        data: data.data || {},
-      } as Block
-    })
-    cb(items)
-  })
+  try {
+    return onSnapshot(
+      q,
+      (snap) => {
+        const items: Block[] = snap.docs.map((d) => {
+          const data = d.data()
+          return {
+            id: d.id,
+            type: data.type as BlockType,
+            size: (data.size as BlockSize) || '2x1',
+            order: data.order ?? 0,
+            userId: data.userId || '',
+            data: data.data || {},
+          } as Block
+        })
+        cb(items)
+      },
+      () => {
+        // On permission error, return empty
+        cb([])
+      }
+    )
+  } catch {
+    cb([])
+    return () => {}
+  }
 }
 
 export async function fetchUserBlocks(userId: string): Promise<Block[]> {
@@ -94,6 +110,7 @@ export async function fetchUserBlocks(userId: string): Promise<Block[]> {
     return {
       id: d.id,
       type: data.type as BlockType,
+      size: (data.size as BlockSize) || '2x1',
       order: data.order ?? 0,
       userId: data.userId || '',
       data: data.data || {},

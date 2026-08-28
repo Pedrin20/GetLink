@@ -1,24 +1,67 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { useUserProfile } from '../hooks/useUserProfile'
 import { fetchUserBlocks, fetchPageSettings } from '../services/blockService'
 import type { Block, PageSettings } from '../types'
 import { DEFAULT_PAGE_SETTINGS } from '../types'
-import { BlockRenderer } from '../components/blocks/BlockRenderer'
+import { PublicProfile as PublicProfileComponent } from '../components/public/PublicProfile'
 
-function getBlockVars(accentColor: string) {
-  return {
-    className: 'public-blocks-dark',
-    vars: {
-      '--profile-accent': accentColor,
-      '--block-bg': 'rgba(255,255,255,0.08)',
-      '--block-border': 'rgba(255,255,255,0.12)',
-      '--block-text': 'rgba(255,255,255,0.95)',
-      '--block-text-secondary': 'rgba(255,255,255,0.7)',
-      '--block-text-muted': 'rgba(255,255,255,0.45)',
-    } as React.CSSProperties,
-  }
+const FONT_MAP: Record<string, string> = {
+  grotesk: "'Space Grotesk', ui-sans-serif, system-ui, sans-serif",
+  sans: "'Inter', ui-sans-serif, system-ui, sans-serif",
+  serifada: "Georgia, 'Times New Roman', serif",
+  mono: "ui-monospace, 'SF Mono', monospace",
+}
+
+const RADIUS_MAP: Record<string, string> = {
+  sharp: '0rem',
+  soft: '0.5rem',
+  medium: '1.1rem',
+  round: '1.6rem',
+}
+
+const PRESET_VARS: Record<string, Record<string, string>> = {
+  neon: {
+    bg: 'linear-gradient(160deg, #1a1533 0%, #14111f 55%, #0f0d18 100%)',
+    surface: 'rgba(255,255,255,0.06)',
+    border: 'rgba(255,255,255,0.12)',
+    text: '#f5f3ff',
+    muted: 'rgba(245,243,255,0.6)',
+    accentText: '#ffffff',
+  },
+  editorial: {
+    bg: '#f7f4ee',
+    surface: '#fffdf9',
+    border: '#e4ddcf',
+    text: '#1c1a17',
+    muted: '#6b6459',
+    accentText: '#fffdf9',
+  },
+  'minimal-mono': {
+    bg: '#ffffff',
+    surface: '#ffffff',
+    border: '#e2e2e2',
+    text: '#111111',
+    muted: '#7a7a7a',
+    accentText: '#ffffff',
+  },
+  sunset: {
+    bg: 'linear-gradient(165deg, #ff8a3d 0%, #ff5e7e 55%, #b5468f 100%)',
+    surface: 'rgba(255,255,255,0.16)',
+    border: 'rgba(255,255,255,0.28)',
+    text: '#ffffff',
+    muted: 'rgba(255,255,255,0.82)',
+    accentText: '#c0396f',
+  },
+  brutalist: {
+    bg: '#ffdd33',
+    surface: '#ffffff',
+    border: '#111111',
+    text: '#111111',
+    muted: '#444444',
+    accentText: '#ffdd33',
+  },
 }
 
 export function PublicProfile() {
@@ -26,10 +69,13 @@ export function PublicProfile() {
   const { profile, loading: profileLoading, error } = useUserProfile(undefined, username)
   const [blocks, setBlocks] = useState<Block[]>([])
   const [pageSettings, setPageSettings] = useState<PageSettings>(DEFAULT_PAGE_SETTINGS)
-  const [blocksLoading, setBlocksLoading] = useState(true)
+  const [blocksLoading, setBlocksLoading] = useState(false)
 
   useEffect(() => {
-    if (!profile?.id) return
+    if (!profile?.id) {
+      setBlocksLoading(false)
+      return
+    }
     setBlocksLoading(true)
     Promise.all([
       fetchUserBlocks(profile.id),
@@ -43,7 +89,7 @@ export function PublicProfile() {
 
   if (profileLoading || blocksLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-900">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0f0d18' }}>
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent" />
       </div>
     )
@@ -51,10 +97,10 @@ export function PublicProfile() {
 
   if (error || !profile) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-900 text-gray-400">
+      <div className="min-h-screen flex items-center justify-center text-gray-400" style={{ background: '#0f0d18' }}>
         <div className="text-center">
           <p className="text-2xl mb-2">:(</p>
-          <p>Perfil nao encontrado</p>
+          <p>Perfil não encontrado</p>
         </div>
       </div>
     )
@@ -67,14 +113,15 @@ export function PublicProfile() {
   const title = headerData?.displayName
     ? `${headerData.displayName} | GetLink`
     : `${profile.displayName} | GetLink`
-  const description = headerData?.bio || profile.bio || `${profile.displayName} esta no GetLink!`
+  const description = headerData?.bio || profile.bio || `${profile.displayName} está no GetLink!`
   const imageUrl = headerData?.avatarUrl || profile.avatarUrl || `${siteUrl}/default-og-image.png`
-  const accentColor = pageSettings.accentColor
-  const blockTheme = useMemo(() => getBlockVars(accentColor), [accentColor])
 
-  // Build grid layout: header spans full width, other blocks in 2 columns
-  const headerBlocks = blocks.filter(b => b.type === 'header')
-  const otherBlocks = blocks.filter(b => b.type !== 'header')
+  const presetVars = PRESET_VARS[pageSettings.preset] || PRESET_VARS.neon
+  const themeVars = {
+    ...presetVars,
+    accent: pageSettings.accentColor,
+    fontDisplay: FONT_MAP[pageSettings.titleFont] || FONT_MAP.grotesk,
+  }
 
   return (
     <>
@@ -96,44 +143,16 @@ export function PublicProfile() {
         <link rel="canonical" href={profileUrl} />
       </Helmet>
 
-      <div
-        className={`min-h-screen py-10 px-4 transition-colors duration-300 bg-gray-900 ${blockTheme.className}`}
-        style={blockTheme.vars}
-      >
-        <div className="max-w-2xl mx-auto space-y-4">
-          {blocks.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-lg text-gray-400">Nenhum conteudo disponivel.</p>
-            </div>
-          ) : (
-            <>
-              {/* Header block - full width */}
-              {headerBlocks.map(block => (
-                <div key={block.id}>
-                  <BlockRenderer block={block} />
-                </div>
-              ))}
-
-              {/* Other blocks - grid layout */}
-              <div className="grid grid-cols-2 gap-4">
-                {otherBlocks.map((block) => (
-                  <div
-                    key={block.id}
-                    className={block.type === 'product' || block.type === 'gallery' || block.type === 'video' || block.type === 'newsletter' || block.type === 'text' ? 'col-span-2' : ''}
-                  >
-                    <BlockRenderer block={block} />
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-
-          {/* Footer */}
-          <div className="text-center pt-8 pb-4">
-            <p className="text-xs text-gray-500">Feito com GetLink</p>
-          </div>
-        </div>
-      </div>
+      <PublicProfileComponent
+        blocks={blocks}
+        theme={{
+          vars: themeVars,
+          blockStyle: pageSettings.blockStyle,
+          density: pageSettings.density,
+          radius: RADIUS_MAP[pageSettings.corners] || RADIUS_MAP.medium,
+          fontDisplay: FONT_MAP[pageSettings.titleFont] || FONT_MAP.grotesk,
+        }}
+      />
     </>
   )
 }

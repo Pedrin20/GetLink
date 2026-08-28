@@ -32,7 +32,7 @@ export function useBlocks(userId?: string) {
     return () => unsub()
   }, [userId])
 
-  const addBlock = useCallback(async <T extends BlockType>(type: T, data: BlockDataMap[T]) => {
+  const addBlock = useCallback(async <T extends BlockType>(type: T, data: BlockDataMap[T] & { size?: import('../types').BlockSize }) => {
     if (!userId) return
     const maxOrder = blocks.reduce((max, b) => Math.max(max, b.order), -1)
     await createBlock(userId, type, data, maxOrder + 1)
@@ -42,8 +42,24 @@ export function useBlocks(userId?: string) {
     await deleteBlock(id)
   }, [])
 
-  const updateBlock = useCallback(async <T extends BlockType>(id: string, data: Partial<BlockDataMap[T]>) => {
-    await updateBlockData(id, data)
+  const updateBlock = useCallback(async (id: string, patch: Partial<Block>) => {
+    // Handle size separately from data
+    const { size, data, ...rest } = patch as any
+    const dataUpdate: any = { ...data, ...rest }
+    if (size !== undefined) {
+      // We need to update size at the document level
+      const { doc, updateDoc } = await import('firebase/firestore')
+      const { db } = await import('../firebase')
+      const ref = doc(db, 'blocks', id)
+      const updates: any = {}
+      if (size) updates.size = size
+      if (data) updates.data = data
+      if (Object.keys(updates).length > 0) {
+        await updateDoc(ref, updates)
+      }
+    } else {
+      await updateBlockData(id, dataUpdate)
+    }
   }, [])
 
   const reorder = useCallback(async (newBlocks: Block[]) => {

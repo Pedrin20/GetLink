@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 import type { Block, BlockType, BlockDataMap, PageSettings } from '../types'
 import {
   createBlock,
+  createBlocks,
   deleteBlock,
   subscribeToUserBlocks,
   updateBlockData,
@@ -38,6 +39,12 @@ export function useBlocks(userId?: string) {
     await createBlock(userId, type, data, maxOrder + 1)
   }, [userId, blocks])
 
+  
+  const addBlocks = useCallback(async (templateBlocks: { type: BlockType; data: any; size?: import('../types').BlockSize }[]) => {
+    if (!userId) return
+    await createBlocks(userId, templateBlocks)
+  }, [userId])
+
   const removeBlock = useCallback(async (id: string) => {
     await deleteBlock(id)
   }, [])
@@ -68,7 +75,7 @@ export function useBlocks(userId?: string) {
     await reorderBlocksService(updates)
   }, [])
 
-  return { blocks, loading, addBlock, removeBlock, updateBlock, reorder }
+  return { blocks, loading, addBlock, addBlocks, removeBlock, updateBlock, reorder }
 }
 
 export function usePageSettings(userId?: string) {

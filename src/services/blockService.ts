@@ -38,6 +38,30 @@ export async function createBlock<T extends BlockType>(
   return docRef.id
 }
 
+
+
+export async function createBlocks(
+  userId: string,
+  blocks: { type: BlockType; data: any; size?: BlockSize }[]
+): Promise<string[]> {
+  const ids: string[] = []
+  for (let i = 0; i < blocks.length; i++) {
+    const { type, data, size } = blocks[i]
+    const blockSize = size || '2x1'
+    const { size: _, ...cleanData } = data
+    const docRef = await addDoc(blocksCol, {
+      userId,
+      type,
+      size: blockSize,
+      data: cleanData,
+      order: i,
+      createdAt: serverTimestamp(),
+    })
+    ids.push(docRef.id)
+  }
+  return ids
+}
+
 export async function updateBlockData<T extends BlockType>(
   id: string,
   data: Partial<BlockDataMap[T]>

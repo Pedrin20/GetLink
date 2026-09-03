@@ -1,10 +1,12 @@
 import { useRef, useState } from 'react'
 import type { Block, BlockType, BlockTypeDef } from '../../types'
+import type { Template } from '../../lib/templates'
 import { useBlocks } from '../../hooks/useBlocks'
 import { BlockLibrary } from './BlockLibrary'
+import { TemplatePicker } from './TemplatePicker'
 import { BlockCard } from './BlockCard'
 import { PropertiesPanel } from './PropertiesPanel'
-import { Monitor, Smartphone, Eye, Share2, Sparkles, ArrowLeft } from 'lucide-react'
+import { Monitor, Smartphone, Eye, Share2, Sparkles, ArrowLeft, LayoutGrid } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 
@@ -13,10 +15,11 @@ function cn(...classes: (string | false | null | undefined)[]) {
 }
 
 export function PageBuilder({ userId }: { userId: string }) {
-  const { blocks, loading, addBlock, removeBlock, updateBlock, reorder } = useBlocks(userId)
+  const { blocks, loading, addBlock, addBlocks, removeBlock, updateBlock, reorder } = useBlocks(userId)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const navigate = useNavigate()
   const [device, setDevice] = useState<'desktop' | 'mobile'>('desktop')
+  const [showPicker, setShowPicker] = useState(true)
   const dragIndex = useRef<number | null>(null)
 
   const selected = blocks.find((b) => b.id === selectedId) ?? null
@@ -42,6 +45,22 @@ export function PageBuilder({ userId }: { userId: string }) {
       toast.success('Bloco adicionado!')
     } catch {
       toast.error('Erro ao adicionar bloco')
+    }
+  }
+
+  
+  async function handleTemplateSelect(template: Template) {
+    try {
+      const blocksToAdd = template.blocks.map((b) => ({
+        type: b.type,
+        data: { ...b.data },
+        size: b.size,
+      }))
+      await addBlocks(blocksToAdd)
+      setShowPicker(false)
+      toast.success(template.name + ' aplicado com sucesso!')
+    } catch {
+      toast.error('Erro ao aplicar template')
     }
   }
 
@@ -73,6 +92,35 @@ export function PageBuilder({ userId }: { userId: string }) {
     next.splice(targetIndex, 0, moved)
     reorder(next)
     dragIndex.current = null
+  }
+
+  if (showPicker && blocks.length === 0 && !loading) {
+    return (
+      <div className="flex h-full flex-col">
+        <header
+          className="flex items-center justify-between gap-4 border-b px-4 py-3 md:px-6"
+          style={{ borderColor: 'oklch(1 0 0 / 10%)' }}
+        >
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => navigate('/dashboard')}
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-gray-400 transition-colors hover:text-white hover:bg-white/5"
+              title="Voltar"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </button>
+            <div>
+              <h1 className="text-lg font-bold tracking-tight text-white">Minha Página</h1>
+            </div>
+          </div>
+        </header>
+        <TemplatePicker
+          onSelect={handleTemplateSelect}
+          onSkip={() => setShowPicker(false)}
+        />
+      </div>
+    )
   }
 
   if (loading) {
@@ -144,6 +192,16 @@ export function PageBuilder({ userId }: { userId: string }) {
             </button>
           </div>
 
+
+          <button
+            type="button"
+            onClick={() => setShowPicker(true)}
+            className="hidden items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-white/5 sm:flex"
+            style={{ borderColor: 'oklch(1 0 0 / 12%)' }}
+          >
+            <LayoutGrid className="h-4 w-4" />
+            Templates
+          </button>
           <button
             type="button"
             className="hidden items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium text-white transition-colors sm:flex"
@@ -214,12 +272,20 @@ export function PageBuilder({ userId }: { userId: string }) {
                     />
                   ))}
                 </div>
-                {blocks.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
+                {blocks.length === 0 && !showPicker ? (
+                  <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
                     <p className="text-sm font-medium text-white">Sua página está vazia</p>
                     <p className="text-xs text-gray-400">
                       Adicione blocos pela biblioteca à esquerda
                     </p>
+                    <button
+                      type="button"
+                      onClick={() => setShowPicker(true)}
+                      className="mt-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors hover:opacity-90"
+                      style={{ background: 'oklch(0.58 0.24 285)' }}
+                    >
+                      Escolher template
+                    </button>
                   </div>
                 ) : null}
               </div>

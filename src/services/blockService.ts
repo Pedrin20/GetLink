@@ -151,8 +151,14 @@ export async function fetchPageSettings(userId: string): Promise<PageSettings> {
       return { ...DEFAULT_PAGE_SETTINGS, ...snap.data() } as PageSettings
     }
   } catch {
-    // fall through
+    // Firestore failed — try localStorage
   }
+  try {
+    const cached = localStorage.getItem(`getlink-settings-${userId}`)
+    if (cached) {
+      return { ...DEFAULT_PAGE_SETTINGS, ...JSON.parse(cached) } as PageSettings
+    }
+  } catch {}
   return DEFAULT_PAGE_SETTINGS
 }
 

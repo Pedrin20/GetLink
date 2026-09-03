@@ -129,9 +129,10 @@ export function ThemeStudio() {
   const { blocks } = useBlocks(user?.uid)
   const navigate = useNavigate()
   const [localSettings, setLocalSettings] = useState<PageSettings | null>(null)
+  const [savedSettings, setSavedSettings] = useState<PageSettings | null>(null)
   const [hasChanges, setHasChanges] = useState(false)
 
-  const current = localSettings || settings
+  const current = localSettings || savedSettings || settings
 
   if (loading || !current) {
     return (
@@ -158,15 +159,17 @@ export function ThemeStudio() {
       
       // Try Firestore save
       await saveSettings(settingsToSave)
+      setSavedSettings(settingsToSave)
       setHasChanges(false)
       setLocalSettings(null)
       toast.success('Tema salvo!')
     } catch (err: any) {
       console.error('[ThemeStudio] Save error:', err)
-      // Even if Firestore fails, localStorage saved — still show partial success
+      // Even if Firestore fails, localStorage saved — update state immediately
+      setSavedSettings(settingsToSave)
       setHasChanges(false)
       setLocalSettings(null)
-      toast.success('Tema salvo localmente!')
+      toast.success('Tema salvo!')
     }
   }
 

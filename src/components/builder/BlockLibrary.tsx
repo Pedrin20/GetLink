@@ -10,6 +10,13 @@ import {
   Mail,
   Share2,
   Plus,
+  Code2,
+  Headphones,
+  Play,
+  Calendar,
+  MessageSquare,
+  HelpCircle,
+  Quote,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -23,6 +30,13 @@ const ICONS: Record<string, LucideIcon> = {
   text: Type,
   newsletter: Mail,
   socials: Share2,
+  github: Code2,
+  spotify: Headphones,
+  youtube: Play,
+  calendar: Calendar,
+  form: MessageSquare,
+  faq: HelpCircle,
+  testimonial: Quote,
 }
 
 export function BlockLibrary({ onAdd }: { onAdd: (def: BlockTypeDef) => void }) {

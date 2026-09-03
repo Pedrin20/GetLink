@@ -8,6 +8,13 @@ import { VideoBlock } from './VideoBlock'
 import { TextBlock } from './TextBlock'
 import { NewsletterBlock } from './NewsletterBlock'
 import { SocialsBlock } from './SocialsBlock'
+import { GitHubBlock } from './GitHubBlock'
+import { SpotifyBlock } from './SpotifyBlock'
+import { YouTubeBlock } from './YouTubeBlock'
+import { CalendarBlock } from './CalendarBlock'
+import { FormBlock } from './FormBlock'
+import { FaqBlock } from './FaqBlock'
+import { TestimonialBlock } from './TestimonialBlock'
 
 type BlockRendererProps = {
   block: Block
@@ -34,6 +41,20 @@ export function BlockRenderer({ block, isEditing }: BlockRendererProps) {
       return <NewsletterBlock data={block.data as any} isEditing={isEditing} />
     case 'socials':
       return <SocialsBlock data={block.data as any} isEditing={isEditing} />
+    case 'github':
+      return <GitHubBlock data={block.data as any} isEditing={isEditing} />
+    case 'spotify':
+      return <SpotifyBlock data={block.data as any} isEditing={isEditing} />
+    case 'youtube':
+      return <YouTubeBlock data={block.data as any} isEditing={isEditing} />
+    case 'calendar':
+      return <CalendarBlock data={block.data as any} isEditing={isEditing} />
+    case 'form':
+      return <FormBlock data={block.data as any} isEditing={isEditing} />
+    case 'faq':
+      return <FaqBlock data={block.data as any} isEditing={isEditing} />
+    case 'testimonial':
+      return <TestimonialBlock data={block.data as any} isEditing={isEditing} />
     default:
       return null
   }

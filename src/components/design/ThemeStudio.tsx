@@ -147,13 +147,26 @@ export function ThemeStudio() {
   }
 
   async function handleSave() {
+    const settingsToSave = (localSettings || current)!
     try {
-      await saveSettings((localSettings || current)!)
+      // Always save to localStorage as immediate fallback
+      try {
+        if (user?.uid) {
+          localStorage.setItem(`getlink-settings-${user.uid}`, JSON.stringify(settingsToSave))
+        }
+      } catch {}
+      
+      // Try Firestore save
+      await saveSettings(settingsToSave)
       setHasChanges(false)
       setLocalSettings(null)
       toast.success('Tema salvo!')
-    } catch {
-      toast.error('Erro ao salvar tema')
+    } catch (err: any) {
+      console.error('[ThemeStudio] Save error:', err)
+      // Even if Firestore fails, localStorage saved — still show partial success
+      setHasChanges(false)
+      setLocalSettings(null)
+      toast.success('Tema salvo localmente!')
     }
   }
 
@@ -303,14 +316,14 @@ export function ThemeStudio() {
           <div className="w-full max-w-sm">
             <p className="mb-3 text-center text-xs text-gray-400">Prévia da página pública</p>
             <div
-              className="overflow-hidden shadow-2xl"
+              className="overflow-hidden shadow-2xl w-[500px]"
               style={{
                 borderRadius: '2.2rem',
                 border: '8px solid oklch(0.97 0.005 285 / 90%)',
                 boxShadow: '0 25px 50px -12px oklch(0.58 0.24 285 / 20%)',
               }}
             >
-              <div className="h-[620px] overflow-y-auto">
+              <div className="h-[650px] overflow-y-auto">
                 <PublicProfile
                   blocks={blocks}
                   theme={{

@@ -35,6 +35,13 @@ export function PageBuilder({ userId }: { userId: string }) {
       text: { content: 'Seu texto aqui' },
       newsletter: { title: 'Assine minha lista', description: 'Novidades no seu e-mail', placeholder: 'seu@email.com', buttonText: 'Assinar' },
       socials: { items: [{ platform: 'instagram', url: '' }] },
+      github: { username: '', showPinned: true },
+      spotify: { uri: '', variant: 'track' },
+      youtube: { videoUrl: '', title: '' },
+      calendar: { title: 'Agendar consulta', description: 'Escolha o melhor horário', calUrl: '', availableHours: 'Seg-Sex, 9h às 18h' },
+      form: { title: 'Fale comigo', fields: ['Nome', 'E-mail', 'Mensagem'], buttonText: 'Enviar', successMessage: 'Mensagem enviada!' },
+      faq: { title: 'Perguntas frequentes', items: [{ question: 'Como funciona?', answer: 'Responda aqui...' }] },
+      testimonial: { title: 'O que dizem sobre mim', items: [{ name: 'Cliente', role: 'Empresa', text: 'Excelente profissional!', avatarUrl: '' }] },
     }
     return defaults[type]
   }

@@ -9,6 +9,13 @@ import {
   CalendarClock,
   Play,
   ImageIcon,
+  Code2,
+  Headphones,
+  Calendar,
+  MessageSquare,
+  HelpCircle,
+  ChevronDown,
+  Quote
 } from 'lucide-react'
 
 interface PublicProfileTheme {
@@ -294,14 +301,120 @@ function ThemedBody({ block, theme }: { block: Block; theme: PublicProfileTheme 
           <span className="text-xs font-medium" style={mutedStyle(theme)}>Redes</span>
           <div className="flex flex-wrap gap-2">
             {[Camera, Music, AtSign, Globe].map((Icon, i) => (
-              <span
-                key={i}
-                className="flex h-8 w-8 items-center justify-center rounded-full"
-                style={{ background: theme.vars.border, color: theme.vars.text }}
-              >
+              <span key={i} className="flex h-8 w-8 items-center justify-center rounded-full"
+                style={{ background: theme.vars.border, color: theme.vars.text }}>
                 <Icon className="h-4 w-4" />
               </span>
             ))}
+          </div>
+        </div>
+      )
+    case 'github':
+      return (
+        <div className="flex h-full w-full flex-col justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <Code2 className="h-5 w-5" style={{ color: theme.vars.accent }} />
+            <h3 className="font-semibold" style={displayStyle(theme)}>@{d.username || 'GitHub'}</h3>
+          </div>
+          <div className="flex gap-1">
+            {[0,1,2,3].map(i => (
+              <div key={i} className="h-2 flex-1 rounded-full" style={{ background: theme.vars.border }} />
+            ))}
+          </div>
+          <span className="text-xs" style={mutedStyle(theme)}>GitHub profile</span>
+        </div>
+      )
+
+    case 'spotify':
+      return (
+        <div className="flex h-full w-full flex-col justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <Headphones className="h-5 w-5" style={{ color: '#1DB954' }} />
+            <h3 className="font-semibold" style={displayStyle(theme)}>Spotify</h3>
+          </div>
+          <div className="flex gap-1">
+            {[0,1,2].map(i => (
+              <div key={i} className="h-3 flex-1 rounded-full" style={{ background: theme.vars.border }} />
+            ))}
+          </div>
+        </div>
+      )
+
+    case 'youtube':
+      return (
+        <div className="relative flex h-full w-full items-center justify-center overflow-hidden"
+          style={{ background: theme.vars.border, borderRadius: theme.radius }}>
+          <span className="flex h-12 w-12 items-center justify-center rounded-full"
+            style={{ background: '#FF0000', color: 'white' }}>
+            <Play className="h-5 w-5 fill-current" />
+          </span>
+          <span className="absolute bottom-2 left-3 text-sm font-medium" style={displayStyle(theme)}>
+            {d.title || 'YouTube'}
+          </span>
+        </div>
+      )
+
+    case 'calendar':
+      return (
+        <div className="flex h-full w-full flex-col justify-between gap-3">
+          <Calendar className="h-6 w-6" style={{ color: theme.vars.accent }} />
+          <div>
+            <h3 className="font-semibold" style={displayStyle(theme)}>{d.title || 'Agendar'}</h3>
+            {d.description && <p className="text-xs" style={mutedStyle(theme)}>{d.description}</p>}
+          </div>
+          <span className="inline-flex w-fit items-center px-3 py-1 text-sm font-semibold" style={pillStyle(theme)}>
+            Agendar
+          </span>
+        </div>
+      )
+
+    case 'form':
+      return (
+        <div className="flex h-full w-full flex-col justify-between gap-2">
+          <MessageSquare className="h-5 w-5" style={{ color: theme.vars.accent }} />
+          <h3 className="font-semibold" style={displayStyle(theme)}>{d.title || 'Formulário'}</h3>
+          <div className="flex flex-col gap-1.5">
+            {(d.fields || ['Nome', 'E-mail']).slice(0, 3).map((f: string) => (
+              <div key={f} className="h-6 rounded-md text-[10px] px-2 flex items-center"
+                style={{ border: '1px solid ' + theme.vars.border, color: theme.vars.muted }}>
+                {f}
+              </div>
+            ))}
+          </div>
+        </div>
+      )
+
+    case 'faq':
+      return (
+        <div className="flex h-full w-full flex-col justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <HelpCircle className="h-5 w-5" style={{ color: theme.vars.accent }} />
+            <h3 className="font-semibold" style={displayStyle(theme)}>{d.title || 'FAQ'}</h3>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            {(d.items || []).slice(0, 3).map((item: any, i: number) => (
+              <div key={i} className="flex items-center justify-between rounded-lg px-3 py-2 text-xs"
+                style={{ background: theme.vars.border }}>
+                <span style={{ color: theme.vars.text }}>{item.question}</span>
+                <ChevronDown className="h-3 w-3" style={{ color: theme.vars.muted }} />
+              </div>
+            ))}
+          </div>
+        </div>
+      )
+
+    case 'testimonial':
+      return (
+        <div className="flex h-full w-full flex-col justify-between gap-2">
+          <Quote className="h-5 w-5" style={{ color: theme.vars.accent }} />
+          <p className="text-sm italic line-clamp-2" style={{ color: theme.vars.muted }}>
+            "{d.items?.[0]?.text || 'Depoimento...'}"
+          </p>
+          <div className="flex items-center gap-2">
+            <div className="h-6 w-6 rounded-full" style={{ background: theme.vars.accent }} />
+            <span className="text-xs font-medium" style={displayStyle(theme)}>
+              {d.items?.[0]?.name || 'Cliente'}
+            </span>
           </div>
         </div>
       )

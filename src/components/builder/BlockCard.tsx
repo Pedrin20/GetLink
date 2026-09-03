@@ -10,6 +10,13 @@ import {
   ImageIcon,
   GripVertical,
   CalendarClock,
+  Code2,
+  Headphones,
+  
+  Calendar,
+  MessageSquare,
+  HelpCircle,
+  Quote,
 } from 'lucide-react'
 
 const SIZE_CLASSES: Record<Block['size'], string> = {
@@ -248,14 +255,116 @@ function BlockBody({ block }: { block: Block }) {
           <span className="text-xs font-medium text-gray-400">Redes</span>
           <div className="flex flex-wrap gap-2">
             {[Camera, Music, AtSign, Globe].map((Icon, i) => (
-              <span
-                key={i}
-                className="flex h-8 w-8 items-center justify-center rounded-full"
-                style={{ background: 'oklch(0.26 0.02 285)', color: 'oklch(0.68 0.02 285)' }}
-              >
+              <span key={i} className="flex h-8 w-8 items-center justify-center rounded-full"
+                style={{ background: 'oklch(0.26 0.02 285)', color: 'oklch(0.68 0.02 285)' }}>
                 <Icon className="h-4 w-4" />
               </span>
             ))}
+          </div>
+        </div>
+      )
+    case 'github':
+      return (
+        <div className="flex h-full w-full flex-col justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <Code2 className="h-5 w-5" style={{ color: 'oklch(0.68 0.02 285)' }} />
+            <h3 className="font-semibold text-white truncate">{d.username || 'GitHub'}</h3>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-gray-400">Perfil + stats</span>
+            {d.showPinned && <span className="text-xs text-gray-400">+ linguagens</span>}
+          </div>
+          <div className="mt-1 h-2 rounded-full" style={{ background: 'oklch(0.26 0.02 285)' }} />
+        </div>
+      )
+
+    case 'spotify':
+      return (
+        <div className="flex h-full w-full flex-col justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <Headphones className="h-5 w-5" style={{ color: '#1DB954' }} />
+            <h3 className="font-semibold text-white truncate">{d.variant || 'Música'}</h3>
+          </div>
+          <div className="flex gap-1">
+            {[0,1,2].map(i => (
+              <div key={i} className="h-3 flex-1 rounded-full" style={{ background: `oklch(${0.3 + i*0.08} 0.08 142)` }} />
+            ))}
+          </div>
+          <span className="text-xs text-gray-400">Spotify embed</span>
+        </div>
+      )
+
+    case 'youtube':
+      return (
+        <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-xl"
+          style={{ background: 'oklch(0.26 0.02 285)' }}>
+          <span className="flex h-12 w-12 items-center justify-center rounded-full text-white"
+            style={{ background: '#FF0000' }}>
+            <Play className="h-5 w-5 fill-current" />
+          </span>
+          <span className="absolute bottom-2 left-3 text-sm font-medium text-white">
+            {d.title || 'YouTube'}
+          </span>
+        </div>
+      )
+
+    case 'calendar':
+      return (
+        <div className="flex h-full w-full flex-col justify-between gap-3">
+          <Calendar className="h-6 w-6" style={{ color: 'oklch(0.65 0.2 160)' }} />
+          <div>
+            <h3 className="font-semibold text-white">{d.title || 'Agendar'}</h3>
+            {d.availableHours && <p className="text-xs text-gray-400">{d.availableHours}</p>}
+          </div>
+          <span className="inline-flex w-fit items-center gap-1 rounded-full px-3 py-1 text-sm font-semibold text-white"
+            style={{ background: 'oklch(0.65 0.2 160)' }}>
+            Agendar
+          </span>
+        </div>
+      )
+
+    case 'form':
+      return (
+        <div className="flex h-full w-full flex-col justify-between gap-2">
+          <MessageSquare className="h-5 w-5" style={{ color: 'oklch(0.58 0.24 285)' }} />
+          <h3 className="font-semibold text-white">{d.title || 'Formulário'}</h3>
+          <div className="flex flex-col gap-1.5">
+            {(d.fields || ['Nome', 'E-mail']).slice(0, 2).map((f: string) => (
+              <div key={f} className="h-5 rounded-md text-[10px] px-2 flex items-center text-gray-500"
+                style={{ border: '1px solid oklch(1 0 0 / 12%)' }}>
+                {f}
+              </div>
+            ))}
+          </div>
+        </div>
+      )
+
+    case 'faq':
+      return (
+        <div className="flex h-full w-full flex-col justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <HelpCircle className="h-5 w-5" style={{ color: 'oklch(0.7 0.19 200)' }} />
+            <h3 className="font-semibold text-white">{d.title || 'FAQ'}</h3>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            {[0,1,2].map(i => (
+              <div key={i} className="h-3 rounded-md" style={{ background: 'oklch(0.26 0.02 285)', width: `${80 - i*15}%` }} />
+            ))}
+          </div>
+          <span className="text-xs text-gray-400">{d.items?.length || 0} perguntas</span>
+        </div>
+      )
+
+    case 'testimonial':
+      return (
+        <div className="flex h-full w-full flex-col justify-between gap-2">
+          <Quote className="h-5 w-5" style={{ color: 'oklch(0.7 0.19 80)' }} />
+          <p className="text-sm text-gray-400 italic line-clamp-2">
+            "{d.items?.[0]?.text || 'Depoimento de cliente...'}"
+          </p>
+          <div className="flex items-center gap-2">
+            <div className="h-5 w-5 rounded-full" style={{ background: 'oklch(0.58 0.24 285)' }} />
+            <span className="text-xs text-white font-medium">{d.items?.[0]?.name || 'Cliente'}</span>
           </div>
         </div>
       )

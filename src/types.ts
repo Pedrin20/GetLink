@@ -42,6 +42,13 @@ export type BlockType =
   | 'text'
   | 'newsletter'
   | 'socials'
+  | 'github'
+  | 'spotify'
+  | 'youtube'
+  | 'calendar'
+  | 'form'
+  | 'faq'
+  | 'testimonial'
 
 export type BlockSize = '1x1' | '2x1' | '2x2' | 'full'
 
@@ -96,6 +103,58 @@ export interface SocialsBlockData {
   items: { platform: string; url: string }[]
 }
 
+
+export interface GitHubBlockData {
+  username: string
+  showPinned: boolean
+}
+
+export interface SpotifyBlockData {
+  uri: string
+  variant: 'track' | 'playlist' | 'album'
+}
+
+export interface YouTubeBlockData {
+  videoUrl: string
+  title: string
+}
+
+export interface CalendarBlockData {
+  title: string
+  description: string
+  calUrl: string
+  availableHours: string
+}
+
+export interface FormBlockData {
+  title: string
+  fields: string[]
+  buttonText: string
+  successMessage: string
+}
+
+export interface FaqItem {
+  question: string
+  answer: string
+}
+
+export interface FaqBlockData {
+  title: string
+  items: FaqItem[]
+}
+
+export interface TestimonialItem {
+  name: string
+  role: string
+  text: string
+  avatarUrl: string
+}
+
+export interface TestimonialBlockData {
+  title: string
+  items: TestimonialItem[]
+}
+
 export type BlockDataMap = {
   header: HeaderBlockData
   link: LinkBlockData
@@ -106,6 +165,13 @@ export type BlockDataMap = {
   text: TextBlockData
   newsletter: NewsletterBlockData
   socials: SocialsBlockData
+  github: GitHubBlockData
+  spotify: SpotifyBlockData
+  youtube: YouTubeBlockData
+  calendar: CalendarBlockData
+  form: FormBlockData
+  faq: FaqBlockData
+  testimonial: TestimonialBlockData
 }
 
 export interface Block<T extends BlockType = BlockType> {
@@ -192,6 +258,55 @@ export const BLOCK_LIBRARY: BlockTypeDef[] = [
     description: 'Ícones de perfis',
     defaultSize: '1x1',
     allowedSizes: ['1x1', '2x1'],
+  },
+  {
+    type: 'github',
+    label: 'GitHub',
+    description: 'Perfil ou repositório',
+    defaultSize: '2x1',
+    allowedSizes: ['2x1', '2x2'],
+  },
+  {
+    type: 'spotify',
+    label: 'Spotify',
+    description: 'Música ou playlist embed',
+    defaultSize: '2x1',
+    allowedSizes: ['2x1', 'full'],
+  },
+  {
+    type: 'youtube',
+    label: 'YouTube',
+    description: 'Embed de vídeo',
+    defaultSize: '2x2',
+    allowedSizes: ['2x1', '2x2'],
+  },
+  {
+    type: 'calendar',
+    label: 'Agendamento',
+    description: 'Marque um horário',
+    defaultSize: '2x1',
+    allowedSizes: ['2x1', 'full'],
+  },
+  {
+    type: 'form',
+    label: 'Formulário',
+    description: 'Captura de contatos',
+    defaultSize: '2x1',
+    allowedSizes: ['2x1', 'full'],
+  },
+  {
+    type: 'faq',
+    label: 'FAQ',
+    description: 'Perguntas frequentes',
+    defaultSize: 'full',
+    allowedSizes: ['2x1', 'full'],
+  },
+  {
+    type: 'testimonial',
+    label: 'Depoimentos',
+    description: 'Avaliações de clientes',
+    defaultSize: '2x2',
+    allowedSizes: ['2x1', '2x2', 'full'],
   },
 ]
 
